@@ -107,3 +107,5 @@ cp src/main/resources/application.properties.example src/main/resources/applicat
 
 Nishat — Zip Code Wilmington, PyJava2025 cohort  
 Capstone passion project 🌱
+
+## also going to seed in a book ny beth wood and
