@@ -112,3 +112,8 @@ Capstone passion project 🌱
 
 mvn compile shortcut
 ./mvnw compile
+
+some brainstorming
+Phase 1 — the 4 games (what we're building now)
+Phase 2 — real-world activity interface
+Phase 3 — MontessoriConnect co-op layer
