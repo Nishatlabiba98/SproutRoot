@@ -1,51 +1,56 @@
 package rocks.zipcode.sproutroot.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Entity // this tells the database this is a database model
-@Table(name = "parent") // names the table parent in postgresql.
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "parent")
 public class Parent {
-    @Id //primary key field
-    @GeneratedValue(strategy = GenerationType.UUID) //postgresql generated uuid for every row automatically.
-    private UUID id; 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, unique = true)
-    private String email; // this makes sure no two parent can have the same email.
-    
-    @Column(nullable = false)
-    private String passwordhash; // this is the hashed password, not the plain text password.
+    private String email;
 
     @Column(nullable = false)
-    private String name; // this is the name of the parent.
+    private String passwordHash;
+
+    @Column(nullable = false)
+    private String name;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt; // this is when the parent was created.
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.All, orphanRemoval = true)
-    private List<Child> children; // this is the list of children belonging to the parent.
-     
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Child> children;
 
-    //getters and setters
+    public Parent() {}
 
-    public Parent() {
-        public UUID getId() { return id; }
+    public UUID getId() { return id; }
 
-        public String getEmail() { return email; }
-        public void setEmail(String email) {this.email = email;}
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-        public String getPasswordhash() { return passwordhash; }
-        public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
+    public LocalDateTime getCreatedAt() { return createdAt; }
 
-        public LocalDateTime getCreatedAt() { return createdAt; }
-
-        public List<Child> getChildren() { return children; }
-        public void setChildren(List<Child> children) { this.children = children;}
-    }
+    public List<Child> getChildren() { return children; }
+    public void setChildren(List<Child> children) { this.children = children; }
 }
