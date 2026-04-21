@@ -1,4 +1,4 @@
-package rocks.zipcodesproutroot.model;
+package rocks.zipcode.sproutroot.model;
 
 public enum ContentType {
     LETTER,

@@ -112,8 +112,11 @@ Capstone passion project 🌱
 
 mvn compile shortcut
 ./mvnw compile
+lsof -ti:8080 | xargs kill -9
 
 some brainstorming
 Phase 1 — the 4 games (what we're building now)
 Phase 2 — real-world activity interface
 Phase 3 — MontessoriConnect co-op layer
+
+we are also going to be using david gettman's book as a reference for seeding in the data.

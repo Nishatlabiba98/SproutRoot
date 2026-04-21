@@ -12,7 +12,7 @@ public class CurriculumContent {
     private UUID id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(50)")
     private ContentType type;
 
     @Column(nullable = false)
