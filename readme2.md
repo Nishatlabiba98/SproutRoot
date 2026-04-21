@@ -1,0 +1,1 @@
+the repository layer is the layer between java and the database. without repositories you would have to write raw sql for evrything.  butwith repositories, spring data jpa writes sql for you
