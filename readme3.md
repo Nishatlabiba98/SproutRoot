@@ -35,3 +35,43 @@ AuthController — register, login
 ChildController — create child, get children
 GameController — start game, submit answer, end game
 DashboardController — parent dashboard data
+
+
+so what are api's and why do we write them in controllers
+
+
+What is an API?
+
+API stands for Application Programming Interface. In web development it's basically a set of URLs your frontend can call to get or send data.
+
+Think of it like a restaurant menu. The menu lists what you can order — you don't go into the kitchen yourself, you just ask for what you want and the kitchen handles it.
+
+In SproutRoot:
+
+The menu = your API endpoints (/api/children, /api/game/session/start)
+The customer = your vanilla JS frontend
+The kitchen = your Spring Boot backend
+Why do we write them in controllers?
+
+Because the controller is the only layer that speaks HTTP. The rest of your app — services, repositories, models — doesn't know anything about HTTP requests or responses. They just work with Java objects.
+
+The controller's job is to:
+
+Translate an HTTP request into a Java method call
+Translate the Java result back into an HTTP response (JSON)
+A concrete example in SproutRoot:
+
+When Zain finishes a game, the JS frontend calls:
+
+POST /api/game/session/end/{id}
+The GameController receives that, calls gameSessionService.updateSession(), gets the updated session back, and returns it as JSON to the browser.
+
+The JS frontend never touches the database. It only ever talks to the controller.
+
+The four HTTP verbs you'll use:
+
+Verb	What it does	Example
+GET	Read data	Get all children
+POST	Create data	Start a game session
+PUT	Update data	Update a child's name
+DELETE	Delete data	Remove a child
