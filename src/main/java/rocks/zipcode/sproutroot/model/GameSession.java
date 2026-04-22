@@ -1,5 +1,6 @@
 package rocks.zipcode.sproutroot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +33,7 @@ public class GameSession {
 
     private LocalDateTime endedAt;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GameAnswer> answers;
 
