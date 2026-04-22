@@ -11,6 +11,7 @@ public class GameQuestion {
     private String correctAnswer;
     private List<String> choices;
     private String pixabayKeyword;
+    private String imageUrl;
     private int questionNumber;
     private int totalQuestions;
     private int currentScore;
@@ -34,6 +35,9 @@ public class GameQuestion {
 
     public String getPixabayKeyword() { return pixabayKeyword; }
     public void setPixabayKeyword(String pixabayKeyword) { this.pixabayKeyword = pixabayKeyword; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
     public int getQuestionNumber() { return questionNumber; }
     public void setQuestionNumber(int questionNumber) { this.questionNumber = questionNumber; }

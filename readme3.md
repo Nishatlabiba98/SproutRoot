@@ -113,3 +113,12 @@ javaimport com.fasterxml.jackson.annotation.JsonIgnore;
 @JsonIgnore
 @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
 private List<GameAnswer> answers;
+
+First go get your free Pixabay API key:
+
+Go to pixabay.com
+Create a free account
+Go to pixabay.com/api/docs — your key will be shown at the top once logged in
+Copy it
+
+Then open application.properties and replace YOUR_PIXABAY_API_KEY_HERE with your real key:

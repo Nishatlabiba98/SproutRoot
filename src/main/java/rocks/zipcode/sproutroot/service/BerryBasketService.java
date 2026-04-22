@@ -29,7 +29,8 @@ public class BerryBasketService extends AbstractGameService {
         GameSession session = gameSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
 
-        List<CurriculumContent> numbers = getContentByType(ContentType.NUMBER);
+        int difficulty = getChildDifficultyLevel(session.getChild().getId());
+        List<CurriculumContent> numbers = getContentByTypeAndDifficulty(ContentType.NUMBER, difficulty);
         Collections.shuffle(numbers);
         CurriculumContent picked = numbers.get(0);
 

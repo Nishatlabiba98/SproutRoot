@@ -29,7 +29,8 @@ public class SortingTrayService extends AbstractGameService {
         GameSession session = gameSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
 
-        List<CurriculumContent> categories = getContentByType(ContentType.CATEGORY);
+        int difficulty = getChildDifficultyLevel(session.getChild().getId());
+        List<CurriculumContent> categories = getContentByTypeAndDifficulty(ContentType.CATEGORY, difficulty);
         Collections.shuffle(categories);
         CurriculumContent picked = categories.get(0);
 

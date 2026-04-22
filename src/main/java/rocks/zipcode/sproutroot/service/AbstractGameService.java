@@ -9,6 +9,7 @@ import rocks.zipcode.sproutroot.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public abstract class AbstractGameService {
@@ -35,10 +36,8 @@ public abstract class AbstractGameService {
         this.childRepository = childRepository;
     }
 
-    // Each game implements this to build its own question
     public abstract GameQuestion buildQuestion(UUID sessionId, int questionNumber);
 
-    // Score an answer — shared logic across all games
     public AnswerResult scoreAnswer(AnswerRequest request) {
         GameSession session = gameSessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new RuntimeException("Session not found"));
@@ -48,7 +47,6 @@ public abstract class AbstractGameService {
 
         boolean correct = isCorrect(request.getGivenAnswer(), content.getValue());
 
-        // Save the answer
         GameAnswer answer = new GameAnswer();
         answer.setSession(session);
         answer.setContent(content);
@@ -57,11 +55,9 @@ public abstract class AbstractGameService {
         answer.setResponseMs(request.getResponseMs());
         gameAnswerRepository.save(answer);
 
-        // Update score
         int earned = correct ? POINTS_PER_CORRECT : 0;
         session.setScore(session.getScore() + earned);
 
-        // Check if game is done
         List<GameAnswer> answers = gameAnswerRepository.findBySessionId(session.getId());
         boolean complete = answers.size() >= QUESTIONS_PER_GAME;
         if (complete) {
@@ -70,7 +66,6 @@ public abstract class AbstractGameService {
         }
         gameSessionRepository.save(session);
 
-        // Track mistake pattern if wrong
         if (!correct) {
             trackMistake(request, content);
         }
@@ -120,11 +115,29 @@ public abstract class AbstractGameService {
         GameSession session = new GameSession();
         session.setChild(child);
         session.setGameType(gameType);
+        session.setDifficultyLevel(getChildDifficultyLevel(childId));
         return gameSessionRepository.save(session);
     }
 
     protected List<CurriculumContent> getContentByType(ContentType type) {
         return contentRepository.findByType(type);
+    }
+
+    protected List<CurriculumContent> getContentByTypeAndDifficulty(ContentType type, int difficultyLevel) {
+        List<CurriculumContent> all = contentRepository.findByType(type);
+        List<CurriculumContent> filtered = all.stream()
+                .filter(c -> c.getDifficultyLevel() <= difficultyLevel)
+                .collect(Collectors.toList());
+        return filtered.isEmpty() ? all : filtered;
+    }
+
+    protected int getChildDifficultyLevel(UUID childId) {
+        List<GameSession> sessions = gameSessionRepository.findByChildId(childId);
+        if (sessions.isEmpty()) return 1;
+        return sessions.stream()
+                .mapToInt(GameSession::getDifficultyLevel)
+                .max()
+                .orElse(1);
     }
 
     protected List<String> buildChoices(String correct, List<CurriculumContent> pool) {

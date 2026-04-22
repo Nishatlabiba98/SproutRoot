@@ -29,7 +29,8 @@ public class SoundSafariService extends AbstractGameService {
         GameSession session = gameSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
 
-        List<CurriculumContent> letters = getContentByType(ContentType.LETTER);
+        int difficulty = getChildDifficultyLevel(session.getChild().getId());
+        List<CurriculumContent> letters = getContentByTypeAndDifficulty(ContentType.LETTER, difficulty);
         Collections.shuffle(letters);
         CurriculumContent picked = letters.get(0);
 

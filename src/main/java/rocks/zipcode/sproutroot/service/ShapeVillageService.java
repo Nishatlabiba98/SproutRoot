@@ -29,7 +29,8 @@ public class ShapeVillageService extends AbstractGameService {
         GameSession session = gameSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
 
-        List<CurriculumContent> shapes = getContentByType(ContentType.SHAPE);
+        int difficulty = getChildDifficultyLevel(session.getChild().getId());
+        List<CurriculumContent> shapes = getContentByTypeAndDifficulty(ContentType.SHAPE, difficulty);
         Collections.shuffle(shapes);
         CurriculumContent picked = shapes.get(0);
 
