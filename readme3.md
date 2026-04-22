@@ -87,3 +87,29 @@ SoundSafariService
 BerryBasketService 
 ShapeVillageService
 SortingTrayService
+
+
+
+That recursion error means the JSON response has an infinite loop — the GameSession has a Child which has a Parent which has children which loops back. Classic JPA circular reference.
+Fix it by adding @JsonIgnore to the relationships that cause the loop. Update three files:
+bashcode src/main/java/rocks/zipcode/sproutroot/model/Parent.java
+Add @JsonIgnore to the children field:
+javaimport com.fasterxml.jackson.annotation.JsonIgnore;
+
+@JsonIgnore
+@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<Child> children;
+bashcode src/main/java/rocks/zipcode/sproutroot/model/Child.java
+Add @JsonIgnore to the sessions field:
+javaimport com.fasterxml.jackson.annotation.JsonIgnore;
+
+@JsonIgnore
+@OneToMany(mappedBy = "child", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<GameSession> sessions;
+bashcode src/main/java/rocks/zipcode/sproutroot/model/GameSession.java
+Add @JsonIgnore to the answers field:
+javaimport com.fasterxml.jackson.annotation.JsonIgnore;
+
+@JsonIgnore
+@OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<GameAnswer> answers;
