@@ -75,3 +75,15 @@ GET	Read data	Get all children
 POST	Create data	Start a game session
 PUT	Update data	Update a child's name
 DELETE	Delete data	Remove a child
+
+
+First — the GameQuestion DTO. This is what Java sends back to the JS frontend when a game starts or after each answer:
+Now the AnswerRequest DTO — what JS sends back when the child taps an answer:
+Save. Now the AnswerResult DTO — what Java sends back after scoring an answer:
+
+Now the abstract game service — shared logic all 4 games inherit:
+
+SoundSafariService
+BerryBasketService 
+ShapeVillageService
+SortingTrayService

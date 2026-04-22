@@ -113,6 +113,29 @@ Capstone passion project 🌱
 mvn compile shortcut
 ./mvnw compile
 lsof -ti:8080 | xargs kill -9
+./mvnw clean spring-boot:run
+
+psql -d sproutroot -c "SELECT type, COUNT(*) FROM curriculum_content GROUP BY type ORDER BY type;"
+54 rows of real Montessori curriculum content in the database:
+
+26 letters — Gettman phonetic sequence, difficulty 1-4
+10 numbers — quantity before symbol, 1-5 then 6-10
+8 shapes — basic four first, then complex
+10 categories — living/non-living → land/air/water → food groups
+
+psql -d sproutroot -c "SELECT code, domain FROM elof_milestone ORDER BY code;"
+code  |              domain             
+ 
+-------+---------------------------------
+-
+ ATL-1 | Approaches to Learning
+ COG-1 | Cognition
+ COG-2 | Cognition
+ COG-3 | Cognition
+ COG-4 | Cognition
+ COG-5 | Cognition
+:
+
 
 some brainstorming
 Phase 1 — the 4 games (what we're building now)
@@ -120,3 +143,4 @@ Phase 2 — real-world activity interface
 Phase 3 — MontessoriConnect co-op layer
 
 we are also going to be using david gettman's book as a reference for seeding in the data.
+Step 6: Game Engine. This is the Java logic that powers each game — picking questions, validating answers, scoring, detecting mistakes. The most interesting part of the backend.
