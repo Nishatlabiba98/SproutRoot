@@ -1,5 +1,6 @@
 package rocks.zipcode.sproutroot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,12 +9,13 @@ import java.util.UUID;
 @Entity
 @Table(name = "child")
 public class Child {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id" ,  nullable = false)
+    @JoinColumn(name = "parent_id", nullable = false)
     private Parent parent;
 
     @Column(nullable = false)
@@ -27,11 +29,13 @@ public class Child {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GameSession> gameSessions;
+    private List<GameSession> sessions;
 
-    public Child () {}
-    public UUID getId() { return id;}
+    public Child() {}
+
+    public UUID getId() { return id; }
 
     public Parent getParent() { return parent; }
     public void setParent(Parent parent) { this.parent = parent; }
@@ -47,6 +51,6 @@ public class Child {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public List<GameSession> getGameSessions() { return gameSessions; }
-    public void setGameSessions(List<GameSession> gameSessions) { this.gameSessions = gameSessions; }
+    public List<GameSession> getSessions() { return sessions; }
+    public void setSessions(List<GameSession> sessions) { this.sessions = sessions; }
 }
