@@ -10,14 +10,18 @@ import java.util.*;
 @Service
 public class SoundSafariService extends AbstractGameService {
 
+    private final PixabayService pixabayService;
+
     public SoundSafariService(
             GameSessionRepository gameSessionRepository,
             GameAnswerRepository gameAnswerRepository,
             CurriculumContentRepository contentRepository,
             MistakePatternRepository mistakePatternRepository,
-            ChildRepository childRepository) {
+            ChildRepository childRepository,
+            PixabayService pixabayService) {
         super(gameSessionRepository, gameAnswerRepository, contentRepository,
               mistakePatternRepository, childRepository);
+        this.pixabayService = pixabayService;
     }
 
     public GameSession startGame(UUID childId) {
@@ -41,6 +45,7 @@ public class SoundSafariService extends AbstractGameService {
         q.setCorrectAnswer(picked.getValue());
         q.setChoices(buildChoices(picked.getValue(), letters));
         q.setPixabayKeyword(picked.getPixabayKeyword());
+        q.setImageUrl(pixabayService.fetchImageUrl(picked.getPixabayKeyword()));
         q.setQuestionNumber(questionNumber);
         q.setTotalQuestions(QUESTIONS_PER_GAME);
         q.setCurrentScore(session.getScore());
