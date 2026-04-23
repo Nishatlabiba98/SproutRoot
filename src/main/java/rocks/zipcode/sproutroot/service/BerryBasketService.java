@@ -10,14 +10,18 @@ import java.util.*;
 @Service
 public class BerryBasketService extends AbstractGameService {
 
+    private final PixabayService pixabayService;
+
     public BerryBasketService(
             GameSessionRepository gameSessionRepository,
             GameAnswerRepository gameAnswerRepository,
             CurriculumContentRepository contentRepository,
             MistakePatternRepository mistakePatternRepository,
-            ChildRepository childRepository) {
+            ChildRepository childRepository,
+            PixabayService pixabayService) {
         super(gameSessionRepository, gameAnswerRepository, contentRepository,
               mistakePatternRepository, childRepository);
+        this.pixabayService = pixabayService;
     }
 
     public GameSession startGame(UUID childId) {
@@ -37,10 +41,11 @@ public class BerryBasketService extends AbstractGameService {
         GameQuestion q = new GameQuestion();
         q.setSessionId(sessionId);
         q.setContentId(picked.getId());
-        q.setQuestionText("Tap " + picked.getValue() + " strawberries to fill the basket!");
+        q.setQuestionText("Tap " + picked.getValue() + " to fill the basket!");
         q.setCorrectAnswer(picked.getValue());
         q.setChoices(List.of(picked.getValue()));
         q.setPixabayKeyword(picked.getPixabayKeyword());
+        q.setImageUrl(pixabayService.fetchImageUrl(picked.getPixabayKeyword()));
         q.setQuestionNumber(questionNumber);
         q.setTotalQuestions(QUESTIONS_PER_GAME);
         q.setCurrentScore(session.getScore());
