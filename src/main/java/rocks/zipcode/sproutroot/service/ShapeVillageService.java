@@ -10,18 +10,14 @@ import java.util.*;
 @Service
 public class ShapeVillageService extends AbstractGameService {
 
-    private final PixabayService pixabayService;
-
     public ShapeVillageService(
             GameSessionRepository gameSessionRepository,
             GameAnswerRepository gameAnswerRepository,
             CurriculumContentRepository contentRepository,
             MistakePatternRepository mistakePatternRepository,
-            ChildRepository childRepository,
-            PixabayService pixabayService) {
+            ChildRepository childRepository) {
         super(gameSessionRepository, gameAnswerRepository, contentRepository,
               mistakePatternRepository, childRepository);
-        this.pixabayService = pixabayService;
     }
 
     public GameSession startGame(UUID childId) {
@@ -41,11 +37,10 @@ public class ShapeVillageService extends AbstractGameService {
         GameQuestion q = new GameQuestion();
         q.setSessionId(sessionId);
         q.setContentId(picked.getId());
-        q.setQuestionText("Find the " + picked.getDisplayName() + " and place it in the scene!");
+        q.setQuestionText("What shape is this?");
         q.setCorrectAnswer(picked.getValue());
         q.setChoices(buildChoices(picked.getValue(), shapes));
         q.setPixabayKeyword(picked.getPixabayKeyword());
-        q.setImageUrl(pixabayService.fetchImageUrl(picked.getPixabayKeyword()));
         q.setQuestionNumber(questionNumber);
         q.setTotalQuestions(QUESTIONS_PER_GAME);
         q.setCurrentScore(session.getScore());

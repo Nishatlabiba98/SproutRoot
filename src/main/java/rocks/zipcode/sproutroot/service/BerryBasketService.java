@@ -10,7 +10,7 @@ import java.util.*;
 @Service
 public class BerryBasketService extends AbstractGameService {
 
-    private final PixabayService pixabayService;
+    private final GiphyService giphyService;
 
     public BerryBasketService(
             GameSessionRepository gameSessionRepository,
@@ -18,10 +18,10 @@ public class BerryBasketService extends AbstractGameService {
             CurriculumContentRepository contentRepository,
             MistakePatternRepository mistakePatternRepository,
             ChildRepository childRepository,
-            PixabayService pixabayService) {
+            GiphyService giphyService) {
         super(gameSessionRepository, gameAnswerRepository, contentRepository,
               mistakePatternRepository, childRepository);
-        this.pixabayService = pixabayService;
+        this.giphyService = giphyService;
     }
 
     public GameSession startGame(UUID childId) {
@@ -38,14 +38,21 @@ public class BerryBasketService extends AbstractGameService {
         Collections.shuffle(numbers);
         CurriculumContent picked = numbers.get(0);
 
+        int target = Integer.parseInt(picked.getValue());
+        List<CurriculumContent> allNumbers = getContentByType(ContentType.NUMBER);
+        List<String> choices = buildChoices(picked.getValue(), allNumbers);
+
+        String gifKeyword = picked.getPixabayKeyword().split(" ")[0];
+        String gifUrl = giphyService.fetchGifUrl(target + " " + gifKeyword);
+
         GameQuestion q = new GameQuestion();
         q.setSessionId(sessionId);
         q.setContentId(picked.getId());
-        q.setQuestionText("Tap " + picked.getValue() + " to fill the basket!");
+        q.setQuestionText("How many do you see? Count and pick the number!");
         q.setCorrectAnswer(picked.getValue());
-        q.setChoices(List.of(picked.getValue()));
+        q.setChoices(choices);
         q.setPixabayKeyword(picked.getPixabayKeyword());
-        q.setImageUrl(pixabayService.fetchImageUrl(picked.getPixabayKeyword()));
+        q.setImageUrl(gifUrl);
         q.setQuestionNumber(questionNumber);
         q.setTotalQuestions(QUESTIONS_PER_GAME);
         q.setCurrentScore(session.getScore());

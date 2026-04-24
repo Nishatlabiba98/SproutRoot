@@ -10,7 +10,7 @@ import java.util.*;
 @Service
 public class SortingTrayService extends AbstractGameService {
 
-    private final PixabayService pixabayService;
+    private final GiphyService giphyService;
 
     public SortingTrayService(
             GameSessionRepository gameSessionRepository,
@@ -18,10 +18,10 @@ public class SortingTrayService extends AbstractGameService {
             CurriculumContentRepository contentRepository,
             MistakePatternRepository mistakePatternRepository,
             ChildRepository childRepository,
-            PixabayService pixabayService) {
+            GiphyService giphyService) {
         super(gameSessionRepository, gameAnswerRepository, contentRepository,
               mistakePatternRepository, childRepository);
-        this.pixabayService = pixabayService;
+        this.giphyService = giphyService;
     }
 
     public GameSession startGame(UUID childId) {
@@ -41,11 +41,11 @@ public class SortingTrayService extends AbstractGameService {
         GameQuestion q = new GameQuestion();
         q.setSessionId(sessionId);
         q.setContentId(picked.getId());
-        q.setQuestionText("Sort these into the correct group: " + picked.getDisplayName());
-        q.setCorrectAnswer(picked.getValue());
-        q.setChoices(buildChoices(picked.getValue(), categories));
+        q.setQuestionText("What do you see? Say the word!");
+        q.setCorrectAnswer(picked.getDisplayName());
+        q.setChoices(List.of("correct", "wrong"));
         q.setPixabayKeyword(picked.getPixabayKeyword());
-        q.setImageUrl(pixabayService.fetchImageUrl(picked.getPixabayKeyword()));
+        q.setImageUrl(giphyService.fetchGifUrl(picked.getPixabayKeyword()));
         q.setQuestionNumber(questionNumber);
         q.setTotalQuestions(QUESTIONS_PER_GAME);
         q.setCurrentScore(session.getScore());
