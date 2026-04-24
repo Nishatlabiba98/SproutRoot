@@ -122,3 +122,9 @@ Go to pixabay.com/api/docs — your key will be shown at the top once logged in
 Copy it
 
 Then open application.properties and replace YOUR_PIXABAY_API_KEY_HERE with your real key:
+
+
+# Step 1 — start a Sound Safari session
+curl -s -X POST http://localhost:8080/api/game/sound-safari/start/f2000000-0000-0000-0000-000000000001
+
+curl -s http://localhost:8080/api/game/sound-safari/question/19c49a23-ea40-4cd7-aa76-212304256886/1
