@@ -12,6 +12,9 @@ public class SoundSafariService extends AbstractGameService {
 
     private final GiphyService giphyService;
 
+    // tracks which content IDs have been used per session
+    private final Map<UUID, Set<UUID>> sessionUsedIds = new HashMap<>();
+
     public SoundSafariService(
             GameSessionRepository gameSessionRepository,
             GameAnswerRepository gameAnswerRepository,
@@ -25,7 +28,9 @@ public class SoundSafariService extends AbstractGameService {
     }
 
     public GameSession startGame(UUID childId) {
-        return createSession(childId, GameType.SOUND_SAFARI);
+        GameSession session = createSession(childId, GameType.SOUND_SAFARI);
+        sessionUsedIds.put(session.getId(), new HashSet<>());
+        return session;
     }
 
     @Override
@@ -35,8 +40,20 @@ public class SoundSafariService extends AbstractGameService {
 
         int difficulty = getChildDifficultyLevel(session.getChild().getId());
         List<CurriculumContent> letters = getContentByTypeAndDifficulty(ContentType.LETTER, difficulty);
-        Collections.shuffle(letters);
-        CurriculumContent picked = letters.get(0);
+
+        // filter out already used letters this session
+        Set<UUID> used = sessionUsedIds.getOrDefault(sessionId, new HashSet<>());
+        List<CurriculumContent> available = letters.stream()
+                .filter(l -> !used.contains(l.getId()))
+                .collect(java.util.stream.Collectors.toList());
+
+        // if all used reset — shouldn't happen in 5 questions but just in case
+        if (available.isEmpty()) available = letters;
+
+        Collections.shuffle(available);
+        CurriculumContent picked = available.get(0);
+        used.add(picked.getId());
+        sessionUsedIds.put(sessionId, used);
 
         GameQuestion q = new GameQuestion();
         q.setSessionId(sessionId);
