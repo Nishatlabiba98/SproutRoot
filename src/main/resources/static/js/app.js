@@ -26,6 +26,10 @@ const EMOJI_MAP = {
   'four strawberries': '🍓', 'five stars': '⭐', 'six fish': '🐟',
   'seven butterflies': '🦋', 'eight balloons': '🎈', 'nine dots': '🔵',
   'ten fingers': '✋',
+  'car': '🚗', 'house': '🏠', 'bird': '🐦', 'flower': '🌸',
+  'toy': '🧸', 'rock': '🪨', 'cow': '🐮', 'duck': '🦆',
+  'butterfly': '🦋', 'strawberry': '🍓', 'carrot': '🥕',
+  'shirt': '👕', 'guitar': '🎸', 'hammer': '🔨',
   'living things nature': '🌿', 'objects household': '🪑',
   'land animals': '🦁', 'water animals fish': '🐠',
   'birds flying animals': '🦅', 'fresh fruits': '🍎',
@@ -102,7 +106,7 @@ function renderQuestion(q) {
 
   // ── SORTING TRAY ─────────────────────────────────────────────────────────
   if (currentGame === 'sorting-tray') {
-    animEl.innerHTML = `<span class="big-emoji">${emoji}</span>`;
+    animEl.innerHTML = `<span class="big-emoji" style="font-size:120px">${emoji}</span>`;
     choicesEl.innerHTML = `
       <button class="hear-btn" onclick="speakWord('${q.correctAnswer}')">🔊 Hear the word!</button>
       <div class="parent-confirm">
