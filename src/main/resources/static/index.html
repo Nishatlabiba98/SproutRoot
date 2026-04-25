@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SproutRoot 🌱</title>
-  <link rel="stylesheet" href="/css/main.css"/>
+  <link rel="stylesheet" href="/css/main.css?v=2"/>
 </head>
 <body>
 
@@ -106,8 +106,10 @@
       <div class="complete-emoji">⭐</div>
       <div class="complete-title">Amazing job, Nishan!</div>
       <div class="complete-score" id="complete-score">You scored 50 points!</div>
+
       <div class="activity-card" id="activity-card" style="display:none">
         <div class="activity-header">🌿 Try this at home!</div>
+        <div class="activity-visual" id="activity-visual"></div>
         <div class="activity-emoji" id="activity-emoji"></div>
         <div class="activity-title" id="activity-title"></div>
         <div class="activity-desc" id="activity-desc"></div>
@@ -115,11 +117,22 @@
           <span>🧺 You need: </span>
           <span id="activity-materials"></span>
         </div>
+        <div class="rec-section">
+          <div class="rec-header">📚 Tonight's books</div>
+          <div id="book-rec1" class="rec-item"></div>
+          <div id="book-rec2" class="rec-item"></div>
+        </div>
+        <div class="rec-section">
+          <div class="rec-header">📺 Tonight's shows</div>
+          <div id="show-rec1" class="rec-item"></div>
+          <div id="show-rec2" class="rec-item"></div>
+        </div>
       </div>
+
       <button class="big-btn green-btn" id="btn-play-again">Play Again!</button>
     </div>
   </div>
 
-  <script src="/js/app.js"></script>
+  <script src="/js/app.js?v=2"></script>
 </body>
 </html>

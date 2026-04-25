@@ -13,7 +13,6 @@ const GAME_NAMES = {
   'shape-village': 'Shape Village',
   'sorting-tray':  'Sorting Tray'
 };
-
 const GAME_TYPE_MAP = {
   'sound-safari': 'SOUND_SAFARI',
   'berry-basket': 'BERRY_BASKET',
@@ -137,7 +136,7 @@ function renderQuestion(q) {
 
     const confirmDiv = document.createElement('div');
     confirmDiv.className = 'parent-confirm';
-    confirmDiv.innerHTML = `<div class="confirm-label">Did Nishan say it?</div>`;
+    confirmDiv.innerHTML = '<div class="confirm-label">Did Nishan say it?</div>';
     const confirmRow = document.createElement('div');
     confirmRow.className = 'confirm-row';
 
@@ -244,12 +243,17 @@ async function showComplete() {
   try {
     const res = await fetch(`${API}/activities/recommend/${GAME_TYPE_MAP[currentGame]}`);
     const activity = await res.json();
-    document.getElementById('activity-emoji').textContent = activity.emoji;
-    document.getElementById('activity-title').textContent = activity.title;
-    document.getElementById('activity-desc').textContent = activity.description;
-    document.getElementById('activity-materials').textContent = activity.materials;
+    document.getElementById('activity-visual').textContent = activity.visualScene || '';
+    document.getElementById('activity-emoji').textContent = activity.emoji || '';
+    document.getElementById('activity-title').textContent = activity.title || '';
+    document.getElementById('activity-desc').textContent = activity.description || '';
+    document.getElementById('activity-materials').textContent = activity.materials || '';
+    document.getElementById('book-rec1').textContent = activity.bookRec1 || '';
+    document.getElementById('book-rec2').textContent = activity.bookRec2 || '';
+    document.getElementById('show-rec1').textContent = activity.showRec1 || '';
+    document.getElementById('show-rec2').textContent = activity.showRec2 || '';
     document.getElementById('activity-card').style.display = 'block';
-  } catch(e) {}
+  } catch(e) { console.error('Activity fetch failed:', e); }
   showScreen('complete');
 }
 
@@ -283,7 +287,6 @@ function playComplete() {
   } catch(e) {}
 }
 
-// Wire up all buttons via addEventListener — no inline onclick
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('btn-sound-safari').addEventListener('click', () => startGame('sound-safari'));
   document.getElementById('btn-berry-basket').addEventListener('click', () => startGame('berry-basket'));
