@@ -31,6 +31,21 @@ public class Activity {
 
     private String emoji;
 
+    @Column(length = 300)
+    private String visualScene;
+
+    @Column(length = 300)
+    private String bookRec1;
+
+    @Column(length = 300)
+    private String bookRec2;
+
+    @Column(length = 300)
+    private String showRec1;
+
+    @Column(length = 300)
+    private String showRec2;
+
     public Activity() {}
 
     public UUID getId() { return id; }
@@ -55,4 +70,19 @@ public class Activity {
 
     public String getEmoji() { return emoji; }
     public void setEmoji(String emoji) { this.emoji = emoji; }
+
+    public String getVisualScene() { return visualScene; }
+    public void setVisualScene(String visualScene) { this.visualScene = visualScene; }
+
+    public String getBookRec1() { return bookRec1; }
+    public void setBookRec1(String bookRec1) { this.bookRec1 = bookRec1; }
+
+    public String getBookRec2() { return bookRec2; }
+    public void setBookRec2(String bookRec2) { this.bookRec2 = bookRec2; }
+
+    public String getShowRec1() { return showRec1; }
+    public void setShowRec1(String showRec1) { this.showRec1 = showRec1; }
+
+    public String getShowRec2() { return showRec2; }
+    public void setShowRec2(String showRec2) { this.showRec2 = showRec2; }
 }

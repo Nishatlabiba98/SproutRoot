@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SproutRoot 🌱</title>
-  <link rel="stylesheet" href="/css/main.css"/>
+  <link rel="stylesheet" href="/css/main.css?v=2"/>
 </head>
 <body>
 
@@ -21,7 +21,7 @@
       <div class="menu-sub">Pick a game to play!</div>
       <div class="game-grid">
 
-        <button class="bubble" style="background:#1A7CE8" onclick="startGame('sound-safari')">
+        <button class="bubble" id="btn-sound-safari" style="background:#1A7CE8">
           <svg width="60" height="52" viewBox="0 0 70 60">
             <rect x="4" y="4" width="28" height="28" rx="6" fill="white" stroke="#0D4FA0" stroke-width="2.5"/>
             <text x="18" y="25" font-size="18" font-weight="900" fill="#1A7CE8" text-anchor="middle" font-family="Arial">A</text>
@@ -32,7 +32,7 @@
           <div class="bubble-tag">Letters &amp; Sounds</div>
         </button>
 
-        <button class="bubble" style="background:#F07820" onclick="startGame('berry-basket')">
+        <button class="bubble" id="btn-berry-basket" style="background:#F07820">
           <svg width="60" height="52" viewBox="0 0 70 60">
             <circle cx="25" cy="20" r="8" fill="#E83020" stroke="#8A1A10" stroke-width="2"/>
             <circle cx="35" cy="14" r="8" fill="#E83020" stroke="#8A1A10" stroke-width="2"/>
@@ -43,7 +43,7 @@
           <div class="bubble-tag">Numbers &amp; Counting</div>
         </button>
 
-        <button class="bubble" style="background:#8830E8" onclick="startGame('shape-village')">
+        <button class="bubble" id="btn-shape-village" style="background:#8830E8">
           <svg width="60" height="52" viewBox="0 0 70 60">
             <circle cx="20" cy="28" r="14" fill="white" stroke="#4A1A88" stroke-width="2.5"/>
             <rect x="38" y="14" width="26" height="26" rx="4" fill="#C0A0F8" stroke="#4A1A88" stroke-width="2.5"/>
@@ -53,7 +53,7 @@
           <div class="bubble-tag">Shapes &amp; Colors</div>
         </button>
 
-        <button class="bubble" style="background:#00A651" onclick="startGame('sorting-tray')">
+        <button class="bubble" id="btn-sorting-tray" style="background:#00A651">
           <svg width="60" height="52" viewBox="0 0 70 60">
             <rect x="2" y="4" width="30" height="20" rx="5" fill="#F5C800" stroke="#7A6000" stroke-width="2"/>
             <text x="17" y="18" font-size="10" font-weight="900" fill="#7A6000" text-anchor="middle" font-family="Arial">Animals</text>
@@ -106,10 +106,33 @@
       <div class="complete-emoji">⭐</div>
       <div class="complete-title">Amazing job, Nishan!</div>
       <div class="complete-score" id="complete-score">You scored 50 points!</div>
-      <button class="big-btn green-btn" onclick="showMenu()">Play Again!</button>
+
+      <div class="activity-card" id="activity-card" style="display:none">
+        <div class="activity-header">🌿 Try this at home!</div>
+        <div class="activity-visual" id="activity-visual"></div>
+        <div class="activity-emoji" id="activity-emoji"></div>
+        <div class="activity-title" id="activity-title"></div>
+        <div class="activity-desc" id="activity-desc"></div>
+        <div class="activity-materials">
+          <span>🧺 You need: </span>
+          <span id="activity-materials"></span>
+        </div>
+        <div class="rec-section">
+          <div class="rec-header">📚 Tonight's books</div>
+          <div id="book-rec1" class="rec-item"></div>
+          <div id="book-rec2" class="rec-item"></div>
+        </div>
+        <div class="rec-section">
+          <div class="rec-header">📺 Tonight's shows</div>
+          <div id="show-rec1" class="rec-item"></div>
+          <div id="show-rec2" class="rec-item"></div>
+        </div>
+      </div>
+
+      <button class="big-btn green-btn" id="btn-play-again">Play Again!</button>
     </div>
   </div>
 
-  <script src="/js/app.js"></script>
+  <script src="/js/app.js?v=2"></script>
 </body>
 </html>
