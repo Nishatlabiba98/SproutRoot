@@ -14,6 +14,13 @@ const GAME_NAMES = {
   'sorting-tray':  'Sorting Tray'
 };
 
+const GAME_TYPE_MAP = {
+  'sound-safari': 'SOUND_SAFARI',
+  'berry-basket': 'BERRY_BASKET',
+  'shape-village': 'SHAPE_VILLAGE',
+  'sorting-tray': 'SORTING_TRAY'
+};
+
 const EMOJI_MAP = {
   'sun': '☀️', 'moon': '🌙', 'apple': '🍎', 'tree': '🌳',
   'cat': '🐱', 'rabbit': '🐰', 'igloo': '🏔️', 'penguin': '🐧',
@@ -78,6 +85,7 @@ function showScreen(id) {
 function showMenu() {
   showScreen('menu');
   currentSession = null; questionNumber = 1; answered = false;
+  document.getElementById('activity-card').style.display = 'none';
 }
 
 async function startGame(gameType) {
@@ -119,59 +127,61 @@ function renderQuestion(q) {
 
   const emoji = getEmoji(q.pixabayKeyword);
 
-  // ── SORTING TRAY ─────────────────────────────────────────────────────────
   if (currentGame === 'sorting-tray') {
     animEl.innerHTML = `<span class="big-emoji" style="font-size:120px">${emoji}</span>`;
-    choicesEl.innerHTML = `
-      <button class="hear-btn" onclick="speakWord('${q.correctAnswer}')">🔊 Hear the word!</button>
-      <div class="parent-confirm">
-        <div class="confirm-label">Did Nishan say it?</div>
-        <div class="confirm-row">
-          <button class="confirm-btn correct-btn" onclick="submitAnswer('correct', this)">✅ Yes!</button>
-          <button class="confirm-btn wrong-btn" onclick="submitAnswer('wrong', this)">❌ Not yet</button>
-        </div>
-      </div>`;
+    const hearBtn = document.createElement('button');
+    hearBtn.className = 'hear-btn';
+    hearBtn.textContent = '🔊 Hear the word!';
+    hearBtn.addEventListener('click', () => speakWord(q.correctAnswer));
+    choicesEl.appendChild(hearBtn);
+
+    const confirmDiv = document.createElement('div');
+    confirmDiv.className = 'parent-confirm';
+    confirmDiv.innerHTML = `<div class="confirm-label">Did Nishan say it?</div>`;
+    const confirmRow = document.createElement('div');
+    confirmRow.className = 'confirm-row';
+
+    const yesBtn = document.createElement('button');
+    yesBtn.className = 'confirm-btn correct-btn';
+    yesBtn.textContent = '✅ Yes!';
+    yesBtn.addEventListener('click', () => submitAnswer('correct', yesBtn));
+
+    const noBtn = document.createElement('button');
+    noBtn.className = 'confirm-btn wrong-btn';
+    noBtn.textContent = '❌ Not yet';
+    noBtn.addEventListener('click', () => submitAnswer('wrong', noBtn));
+
+    confirmRow.appendChild(yesBtn);
+    confirmRow.appendChild(noBtn);
+    confirmDiv.appendChild(confirmRow);
+    choicesEl.appendChild(confirmDiv);
     return;
   }
 
-  // ── SOUND SAFARI ─────────────────────────────────────────────────────────
   if (currentGame === 'sound-safari') {
     animEl.innerHTML = `
       <span class="big-emoji">${emoji}</span>
       <span class="anim-letter">${q.correctAnswer.toUpperCase()}</span>`;
     setTimeout(() => speakWord(q.correctAnswer), 600);
-  }
-
-  // ── BERRY BASKET ─────────────────────────────────────────────────────────
-  else if (currentGame === 'berry-basket') {
+  } else if (currentGame === 'berry-basket') {
     const count = parseInt(q.correctAnswer);
     let emojis = '';
-    for (let i = 0; i < count; i++) {
-      emojis += `<span class="count-emoji">${emoji}</span>`;
-    }
-    animEl.innerHTML = `
-      <div class="emoji-count-row">${emojis}</div>
-      <div class="count-number">${count}</div>`;
-  }
-
-  // ── SHAPE VILLAGE ─────────────────────────────────────────────────────────
-  else if (currentGame === 'shape-village') {
+    for (let i = 0; i < count; i++) emojis += `<span class="count-emoji">${emoji}</span>`;
+    animEl.innerHTML = `<div class="emoji-count-row">${emojis}</div><div class="count-number">${count}</div>`;
+  } else if (currentGame === 'shape-village') {
     const svg = SHAPE_SVGS[q.correctAnswer.toLowerCase()] || SHAPE_SVGS['circle'];
     animEl.innerHTML = `<div class="anim-shape">${svg}</div>`;
   }
 
-  // ── CHOICES ───────────────────────────────────────────────────────────────
   q.choices.forEach(choice => {
     const btn = document.createElement('button');
     btn.className = 'choice-btn';
     if (currentGame === 'shape-village' && SHAPE_SVGS[choice.toLowerCase()]) {
-      btn.innerHTML = `
-        <div class="choice-shape">${SHAPE_SVGS[choice.toLowerCase()]}</div>
-        <div class="choice-label">${choice.toUpperCase()}</div>`;
+      btn.innerHTML = `<div class="choice-shape">${SHAPE_SVGS[choice.toLowerCase()]}</div><div class="choice-label">${choice.toUpperCase()}</div>`;
     } else {
       btn.textContent = choice.toUpperCase();
     }
-    btn.onclick = () => submitAnswer(choice, btn);
+    btn.addEventListener('click', () => submitAnswer(choice, btn));
     choicesEl.appendChild(btn);
   });
 }
@@ -180,9 +190,7 @@ function speakWord(word) {
   try {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(word);
-    u.rate = 0.6;
-    u.pitch = 1.5;
-    u.volume = 1;
+    u.rate = 0.6; u.pitch = 1.5; u.volume = 1;
     const voices = window.speechSynthesis.getVoices();
     const kidVoice = voices.find(v =>
       v.name.includes('Samantha') || v.name.includes('Karen') ||
@@ -229,10 +237,19 @@ async function submitAnswer(given, btn) {
   }, 1800);
 }
 
-function showComplete() {
+async function showComplete() {
   document.getElementById('complete-score').textContent =
     `You scored ${currentQuestion.currentScore} points!`;
   playComplete();
+  try {
+    const res = await fetch(`${API}/activities/recommend/${GAME_TYPE_MAP[currentGame]}`);
+    const activity = await res.json();
+    document.getElementById('activity-emoji').textContent = activity.emoji;
+    document.getElementById('activity-title').textContent = activity.title;
+    document.getElementById('activity-desc').textContent = activity.description;
+    document.getElementById('activity-materials').textContent = activity.materials;
+    document.getElementById('activity-card').style.display = 'block';
+  } catch(e) {}
   showScreen('complete');
 }
 
@@ -265,3 +282,12 @@ function playComplete() {
     });
   } catch(e) {}
 }
+
+// Wire up all buttons via addEventListener — no inline onclick
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('btn-sound-safari').addEventListener('click', () => startGame('sound-safari'));
+  document.getElementById('btn-berry-basket').addEventListener('click', () => startGame('berry-basket'));
+  document.getElementById('btn-shape-village').addEventListener('click', () => startGame('shape-village'));
+  document.getElementById('btn-sorting-tray').addEventListener('click', () => startGame('sorting-tray'));
+  document.getElementById('btn-play-again').addEventListener('click', () => showMenu());
+});
