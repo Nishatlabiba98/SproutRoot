@@ -6,11 +6,13 @@ import rocks.zipcode.sproutroot.model.*;
 import rocks.zipcode.sproutroot.repository.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SortingTrayService extends AbstractGameService {
 
     private final GiphyService giphyService;
+    private final Map<UUID, Set<UUID>> sessionUsedIds = new HashMap<>();
 
     public SortingTrayService(
             GameSessionRepository gameSessionRepository,
@@ -25,7 +27,9 @@ public class SortingTrayService extends AbstractGameService {
     }
 
     public GameSession startGame(UUID childId) {
-        return createSession(childId, GameType.SORTING_TRAY);
+        GameSession session = createSession(childId, GameType.SORTING_TRAY);
+        sessionUsedIds.put(session.getId(), new HashSet<>());
+        return session;
     }
 
     @Override
@@ -35,8 +39,17 @@ public class SortingTrayService extends AbstractGameService {
 
         int difficulty = getChildDifficultyLevel(session.getChild().getId());
         List<CurriculumContent> categories = getContentByTypeAndDifficulty(ContentType.CATEGORY, difficulty);
-        Collections.shuffle(categories);
-        CurriculumContent picked = categories.get(0);
+
+        Set<UUID> used = sessionUsedIds.getOrDefault(sessionId, new HashSet<>());
+        List<CurriculumContent> available = categories.stream()
+                .filter(c -> !used.contains(c.getId()))
+                .collect(Collectors.toList());
+        if (available.isEmpty()) { available = categories; used.clear(); }
+
+        Collections.shuffle(available);
+        CurriculumContent picked = available.get(0);
+        used.add(picked.getId());
+        sessionUsedIds.put(sessionId, used);
 
         GameQuestion q = new GameQuestion();
         q.setSessionId(sessionId);

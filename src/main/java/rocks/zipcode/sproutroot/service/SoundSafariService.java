@@ -6,13 +6,12 @@ import rocks.zipcode.sproutroot.model.*;
 import rocks.zipcode.sproutroot.repository.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SoundSafariService extends AbstractGameService {
 
     private final GiphyService giphyService;
-
-    // tracks which content IDs have been used per session
     private final Map<UUID, Set<UUID>> sessionUsedIds = new HashMap<>();
 
     public SoundSafariService(
@@ -41,14 +40,11 @@ public class SoundSafariService extends AbstractGameService {
         int difficulty = getChildDifficultyLevel(session.getChild().getId());
         List<CurriculumContent> letters = getContentByTypeAndDifficulty(ContentType.LETTER, difficulty);
 
-        // filter out already used letters this session
         Set<UUID> used = sessionUsedIds.getOrDefault(sessionId, new HashSet<>());
         List<CurriculumContent> available = letters.stream()
                 .filter(l -> !used.contains(l.getId()))
-                .collect(java.util.stream.Collectors.toList());
-
-        // if all used reset — shouldn't happen in 5 questions but just in case
-        if (available.isEmpty()) available = letters;
+                .collect(Collectors.toList());
+        if (available.isEmpty()) { available = letters; used.clear(); }
 
         Collections.shuffle(available);
         CurriculumContent picked = available.get(0);

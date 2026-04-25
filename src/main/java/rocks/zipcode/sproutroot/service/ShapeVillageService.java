@@ -6,9 +6,12 @@ import rocks.zipcode.sproutroot.model.*;
 import rocks.zipcode.sproutroot.repository.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ShapeVillageService extends AbstractGameService {
+
+    private final Map<UUID, Set<UUID>> sessionUsedIds = new HashMap<>();
 
     public ShapeVillageService(
             GameSessionRepository gameSessionRepository,
@@ -21,7 +24,9 @@ public class ShapeVillageService extends AbstractGameService {
     }
 
     public GameSession startGame(UUID childId) {
-        return createSession(childId, GameType.SHAPE_VILLAGE);
+        GameSession session = createSession(childId, GameType.SHAPE_VILLAGE);
+        sessionUsedIds.put(session.getId(), new HashSet<>());
+        return session;
     }
 
     @Override
@@ -31,8 +36,17 @@ public class ShapeVillageService extends AbstractGameService {
 
         int difficulty = getChildDifficultyLevel(session.getChild().getId());
         List<CurriculumContent> shapes = getContentByTypeAndDifficulty(ContentType.SHAPE, difficulty);
-        Collections.shuffle(shapes);
-        CurriculumContent picked = shapes.get(0);
+
+        Set<UUID> used = sessionUsedIds.getOrDefault(sessionId, new HashSet<>());
+        List<CurriculumContent> available = shapes.stream()
+                .filter(s -> !used.contains(s.getId()))
+                .collect(Collectors.toList());
+        if (available.isEmpty()) { available = shapes; used.clear(); }
+
+        Collections.shuffle(available);
+        CurriculumContent picked = available.get(0);
+        used.add(picked.getId());
+        sessionUsedIds.put(sessionId, used);
 
         GameQuestion q = new GameQuestion();
         q.setSessionId(sessionId);

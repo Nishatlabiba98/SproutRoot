@@ -6,11 +6,13 @@ import rocks.zipcode.sproutroot.model.*;
 import rocks.zipcode.sproutroot.repository.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BerryBasketService extends AbstractGameService {
 
     private final GiphyService giphyService;
+    private final Map<UUID, Set<UUID>> sessionUsedIds = new HashMap<>();
 
     public BerryBasketService(
             GameSessionRepository gameSessionRepository,
@@ -25,7 +27,9 @@ public class BerryBasketService extends AbstractGameService {
     }
 
     public GameSession startGame(UUID childId) {
-        return createSession(childId, GameType.BERRY_BASKET);
+        GameSession session = createSession(childId, GameType.BERRY_BASKET);
+        sessionUsedIds.put(session.getId(), new HashSet<>());
+        return session;
     }
 
     @Override
@@ -35,13 +39,21 @@ public class BerryBasketService extends AbstractGameService {
 
         int difficulty = getChildDifficultyLevel(session.getChild().getId());
         List<CurriculumContent> numbers = getContentByTypeAndDifficulty(ContentType.NUMBER, difficulty);
-        Collections.shuffle(numbers);
-        CurriculumContent picked = numbers.get(0);
+
+        Set<UUID> used = sessionUsedIds.getOrDefault(sessionId, new HashSet<>());
+        List<CurriculumContent> available = numbers.stream()
+                .filter(n -> !used.contains(n.getId()))
+                .collect(Collectors.toList());
+        if (available.isEmpty()) { available = numbers; used.clear(); }
+
+        Collections.shuffle(available);
+        CurriculumContent picked = available.get(0);
+        used.add(picked.getId());
+        sessionUsedIds.put(sessionId, used);
 
         int target = Integer.parseInt(picked.getValue());
         List<CurriculumContent> allNumbers = getContentByType(ContentType.NUMBER);
         List<String> choices = buildChoices(picked.getValue(), allNumbers);
-
         String gifKeyword = picked.getPixabayKeyword().split(" ")[0];
         String gifUrl = giphyService.fetchGifUrl(target + " " + gifKeyword);
 
