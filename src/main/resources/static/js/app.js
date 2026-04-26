@@ -120,7 +120,7 @@ let currentGame = null, currentSession = null, currentQuestion = null;
 let questionNumber = 1, answered = false;
 
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
   document.getElementById('screen-' + id).classList.add('active');
 }
 
@@ -194,7 +194,7 @@ function renderIntroPeriod2(intro) {
   choicesEl.innerHTML = '';
   choicesEl.style.display = 'grid';
 
-  intro.period2.choices.forEach(choice => {
+  intro.period2.choices.forEach(function(choice) {
     const btn = document.createElement('button');
     btn.className = 'intro-choice-btn';
     if (intro.period2.svgs && intro.period2.svgs[choice]) {
@@ -202,18 +202,18 @@ function renderIntroPeriod2(intro) {
     } else {
       btn.textContent = choice.toUpperCase();
     }
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', function() {
       const isCorrect = choice === intro.period2.correct;
       btn.classList.add(isCorrect ? 'correct' : 'wrong');
       if (isCorrect) {
-        setTimeout(() => startActualGame(pendingGame), 800);
+        setTimeout(function() { startActualGame(pendingGame); }, 800);
       } else {
-        choicesEl.querySelectorAll('.intro-choice-btn').forEach(b => {
+        choicesEl.querySelectorAll('.intro-choice-btn').forEach(function(b) {
           const label = b.querySelector('div');
           const text = label ? label.textContent.toLowerCase() : b.textContent.toLowerCase();
           if (text === intro.period2.correct) b.classList.add('correct');
         });
-        setTimeout(() => startActualGame(pendingGame), 1200);
+        setTimeout(function() { startActualGame(pendingGame); }, 1200);
       }
     });
     choicesEl.appendChild(btn);
@@ -268,6 +268,53 @@ function playCountSounds(count) {
       };
     }(i), i * 300);
   }
+}
+
+function speakAnimalSound(animalKey, animalName, sound) {
+  const extensions = ['mp3', 'wav'];
+  let played = false;
+
+  function tryPlay(idx) {
+    if (idx >= extensions.length) {
+      try {
+        window.speechSynthesis.cancel();
+        const voices = window.speechSynthesis.getVoices();
+        const kidVoice = voices.find(function(v) {
+          return v.name.includes('Samantha') || v.name.includes('Karen') ||
+                 v.name.includes('Moira') || v.lang === 'en-US';
+        });
+        const phrase = sound ? 'The ' + animalName + ' says ' + sound : animalName;
+        const u = new SpeechSynthesisUtterance(phrase);
+        u.rate = 0.55; u.pitch = 1.3; u.volume = 1;
+        if (kidVoice) u.voice = kidVoice;
+        window.speechSynthesis.speak(u);
+      } catch(e) {}
+      return;
+    }
+    const audio = new Audio('/audio/' + animalKey + '.' + extensions[idx]);
+    audio.oncanplaythrough = function() {
+      if (!played) { played = true; audio.play(); }
+    };
+    audio.onerror = function() { tryPlay(idx + 1); };
+    audio.load();
+  }
+
+  tryPlay(0);
+}
+
+function speakWord(word) {
+  try {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(word);
+    u.rate = 0.6; u.pitch = 1.5; u.volume = 1;
+    const voices = window.speechSynthesis.getVoices();
+    const kidVoice = voices.find(function(v) {
+      return v.name.includes('Samantha') || v.name.includes('Karen') ||
+             v.name.includes('Moira') || v.lang === 'en-US';
+    });
+    if (kidVoice) u.voice = kidVoice;
+    window.speechSynthesis.speak(u);
+  } catch(e) {}
 }
 
 function renderQuestion(q) {
@@ -345,35 +392,6 @@ function renderQuestion(q) {
     btn.addEventListener('click', function() { submitAnswer(choice, btn); });
     choicesEl.appendChild(btn);
   });
-}
-
-function speakWord(word) {
-  try {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(word);
-    u.rate = 0.6; u.pitch = 1.5; u.volume = 1;
-    const voices = window.speechSynthesis.getVoices();
-    const kidVoice = voices.find(function(v) {
-      return v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Moira') || v.lang === 'en-US';
-    });
-    if (kidVoice) u.voice = kidVoice;
-    window.speechSynthesis.speak(u);
-  } catch(e) {}
-}
-
-function speakAnimalSound(animalKey, animalName, sound) {
-  try {
-    window.speechSynthesis.cancel();
-    const voices = window.speechSynthesis.getVoices();
-    const kidVoice = voices.find(function(v) {
-      return v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Moira') || v.lang === 'en-US';
-    });
-    const phrase = sound ? 'The ' + animalName + ' says ' + sound : animalName;
-    const u = new SpeechSynthesisUtterance(phrase);
-    u.rate = 0.55; u.pitch = 1.3; u.volume = 1;
-    if (kidVoice) u.voice = kidVoice;
-    window.speechSynthesis.speak(u);
-  } catch(e) {}
 }
 
 async function submitAnswer(given, btn) {
@@ -468,15 +486,11 @@ function playComplete() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('btn-sound-safari').addEventListener('click', function() { selectWork('sound-safari'); });
-  document.getElementById('btn-berry-basket').addEventListener('click', function() { selectWork('berry-basket'); });
-  document.getElementById('btn-shape-village').addEventListener('click', function() { selectWork('shape-village'); });
-  document.getElementById('btn-sorting-tray').addEventListener('click', function() { selectWork('sorting-tray'); });
-  document.getElementById('intro-next-btn').addEventListener('click', function() {
-    const intro = INTRO_CONTENT[pendingGame];
-    if (introPhase === 1) renderIntroPeriod2(intro);
-    else startActualGame(pendingGame);
-  });
-  document.getElementById('btn-play-again').addEventListener('click', function() { showMenu(); });
   renderPinkTower(currentDifficulty);
 });
+
+function introNextClicked() {
+  var intro = INTRO_CONTENT[pendingGame];
+  if (introPhase === 1) renderIntroPeriod2(intro);
+  else startActualGame(pendingGame);
+}
