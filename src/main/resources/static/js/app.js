@@ -20,6 +20,54 @@ const GAME_TYPE_MAP = {
   'sorting-tray': 'SORTING_TRAY'
 };
 
+const ANIMAL_SOUNDS = {
+  'cow': 'mooooo', 'dog': 'woof woof', 'cat': 'meow',
+  'duck': 'quack quack', 'frog': 'ribbit ribbit',
+  'lion': 'roarrr', 'elephant': 'pawww', 'sheep': 'baaaa',
+  'horse': 'neigh', 'bird': 'tweet tweet', 'pig': 'oink oink',
+  'owl': 'hoo hoo', 'snake': 'hisss', 'monkey': 'ooh ooh aah',
+  'bear': 'groarrr', 'whale': 'wooooo', 'fish': 'blub blub',
+  'rabbit': 'squeak', 'penguin': 'squawk'
+};
+
+const ANIMAL_EMOJIS = {
+  'cow': '🐄', 'dog': '🐶', 'cat': '🐱', 'duck': '🦆',
+  'frog': '🐸', 'lion': '🦁', 'elephant': '🐘', 'sheep': '🐑',
+  'horse': '🐴', 'bird': '🐦', 'pig': '🐷', 'owl': '🦉',
+  'snake': '🐍', 'monkey': '🐒', 'bear': '🐻', 'whale': '🐳',
+  'fish': '🐟', 'rabbit': '🐰', 'penguin': '🐧'
+};
+
+const completedGames = new Set();
+let currentDifficulty = 1;
+
+const INTRO_CONTENT = {
+  'sound-safari': {
+    period1: { visual: '🍎', text: 'This is Apple.', sub: 'Apple starts with the sound... A!' },
+    period2: { question: 'Which letter starts Apple?', choices: ['A', 'B', 'C'], correct: 'A', svgs: null }
+  },
+  'berry-basket': {
+    period1: { visual: '⭐⭐⭐', text: 'This is 3.', sub: 'Count the stars: one... two... three!' },
+    period2: { question: 'How many stars do you see? ⭐⭐', choices: ['1', '2', '3'], correct: '2', svgs: null }
+  },
+  'shape-village': {
+    period1: { visual: '⭕', text: 'This is a Circle.', sub: 'Circles are perfectly round with no corners.' },
+    period2: { question: 'Which one is the Circle?', choices: ['circle', 'square'], correct: 'circle',
+      svgs: {
+        'circle': '<svg width="50" height="50" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#FF6B6B" stroke="white" stroke-width="3"/></svg>',
+        'square': '<svg width="50" height="50" viewBox="0 0 100 100"><rect x="8" y="8" width="84" height="84" rx="14" fill="#4ECDC4" stroke="white" stroke-width="3"/></svg>'
+      }
+    }
+  },
+  'sorting-tray': {
+    period1: { visual: '🐄', text: 'This is a Cow.', sub: 'The cow says... mooooo!' },
+    period2: null
+  }
+};
+
+let introPhase = 1;
+let pendingGame = null;
+
 const EMOJI_MAP = {
   'sun': '☀️', 'moon': '🌙', 'apple': '🍎', 'tree': '🌳',
   'cat': '🐱', 'rabbit': '🐰', 'igloo': '🏔️', 'penguin': '🐧',
@@ -36,25 +84,20 @@ const EMOJI_MAP = {
   'sixteen fish': '🐟', 'seventeen birds': '🐦', 'eighteen apples': '🍎',
   'nineteen stars': '⭐', 'twenty dots': '🔵',
   'car': '🚗', 'house': '🏠', 'bird': '🐦', 'flower': '🌸',
-  'toy': '🧸', 'rock': '🪨', 'cow': '🐮', 'duck': '🦆',
-  'butterfly': '🦋', 'strawberry': '🍓', 'carrot': '🥕',
-  'shirt': '👕', 'guitar': '🎸', 'hammer': '🔨',
-  'bus': '🚌', 'star': '⭐', 'book': '📚',
-  'cup': '☕', 'shoe': '👟', 'cake': '🎂', 'boat': '⛵',
-  'frog': '🐸', 'bear': '🐻', 'horse': '🐴', 'train': '🚂',
-  'plane': '✈️', 'pizza': '🍕', 'banana': '🍌', 'milk': '🥛',
-  'sock': '🧦', 'key': '🔑',
+  'cow': '🐄', 'duck': '🦆', 'butterfly': '🦋', 'strawberry': '🍓',
+  'carrot': '🥕', 'shirt': '👕', 'guitar': '🎸', 'hammer': '🔨',
+  'bus': '🚌', 'star': '⭐', 'book': '📚', 'cup': '☕',
+  'shoe': '👟', 'cake': '🎂', 'boat': '⛵', 'frog': '🐸',
+  'bear': '🐻', 'horse': '🐴', 'train': '🚂', 'plane': '✈️',
+  'pizza': '🍕', 'banana': '🍌', 'milk': '🥛', 'sock': '🧦',
+  'key': '🔑', 'sheep': '🐑', 'pig': '🐷', 'owl': '🦉',
+  'snake': '🐍', 'monkey': '🐒',
   'heart shape': '❤️', 'star shape': '⭐', 'cross shape': '✚',
-  'crescent shape': '🌙', 'arrow shape': '➡️',
-  'living things nature': '🌿', 'objects household': '🪑',
-  'land animals': '🦁', 'water animals fish': '🐠',
-  'birds flying animals': '🦅', 'fresh fruits': '🍎',
-  'fresh vegetables': '🥕', 'childrens clothing': '👕',
-  'musical instruments': '🎸', 'tools workshop': '🔧'
+  'crescent shape': '🌙', 'arrow shape': '➡️'
 };
 
 function getEmoji(keyword) {
-  return EMOJI_MAP[keyword] || EMOJI_MAP[keyword.split(' ')[0]] || '🎯';
+  return ANIMAL_EMOJIS[keyword] || EMOJI_MAP[keyword] || EMOJI_MAP[keyword.split(' ')[0]] || '🎯';
 }
 
 const SHAPE_SVGS = {
@@ -70,7 +113,7 @@ const SHAPE_SVGS = {
   heart:     '<svg width="100" height="100" viewBox="0 0 100 100"><path d="M50,85 C50,85 10,55 10,30 C10,15 22,5 35,5 C42,5 48,9 50,13 C52,9 58,5 65,5 C78,5 90,15 90,30 C90,55 50,85 50,85Z" fill="#FF6B6B" stroke="white" stroke-width="3"/></svg>',
   cross:     '<svg width="100" height="100" viewBox="0 0 100 100"><rect x="38" y="8" width="24" height="84" rx="6" fill="#60A5FA" stroke="white" stroke-width="3"/><rect x="8" y="38" width="84" height="24" rx="6" fill="#60A5FA" stroke="white" stroke-width="3"/></svg>',
   crescent:  '<svg width="100" height="100" viewBox="0 0 100 100"><path d="M65,15 C40,15 20,33 20,55 C20,77 40,95 65,95 C45,85 32,71 32,55 C32,39 45,25 65,15Z" fill="#A78BFA" stroke="white" stroke-width="3"/></svg>',
-  arrow:     '<svg width="100" height="100" viewBox="0 0 100 100"><polygon points="10,38 60,38 60,20 95,50 60,80 60,62 10,62" fill="#34D399" stroke="white" stroke-width="3" stroke-linejoin="round"/></svg>',
+  arrow:     '<svg width="100" height="100" viewBox="0 0 100 100"><polygon points="10,38 60,38 60,20 95,50 60,80 60,62 10,62" fill="#34D399" stroke="white" stroke-width="3" stroke-linejoin="round"/></svg>'
 };
 
 let currentGame = null, currentSession = null, currentQuestion = null;
@@ -85,9 +128,101 @@ function showMenu() {
   showScreen('menu');
   currentSession = null; questionNumber = 1; answered = false;
   document.getElementById('activity-card').style.display = 'none';
+  document.getElementById('work-cycle-badge').style.display = 'none';
+  renderPinkTower(currentDifficulty);
 }
 
-async function startGame(gameType) {
+function renderPinkTower(level) {
+  const tower = document.getElementById('pink-tower');
+  const label = document.getElementById('tower-label');
+  if (!tower) return;
+  tower.innerHTML = '';
+  for (let i = level; i >= 1; i--) {
+    const block = document.createElement('div');
+    block.className = 'tower-block';
+    block.style.width = (24 + i * 14) + 'px';
+    tower.appendChild(block);
+  }
+  if (label) label.textContent = 'Level ' + level;
+}
+
+function markGameComplete(gameType) {
+  completedGames.add(gameType);
+  const dotMap = {
+    'sound-safari': 'cycle-sound-safari',
+    'berry-basket': 'cycle-berry-basket',
+    'shape-village': 'cycle-shape-village',
+    'sorting-tray': 'cycle-sorting-tray'
+  };
+  const dot = document.getElementById(dotMap[gameType]);
+  if (dot) dot.classList.add('done');
+}
+
+function showIntro(gameType) {
+  pendingGame = gameType;
+  introPhase = 1;
+  const intro = INTRO_CONTENT[gameType];
+  const bar = document.getElementById('intro-bar');
+  bar.style.background = GAME_COLORS[gameType];
+  document.getElementById('intro-title').textContent = GAME_NAMES[gameType];
+  renderIntroPeriod1(intro);
+  showScreen('intro');
+}
+
+function renderIntroPeriod1(intro) {
+  document.getElementById('period-label').textContent = 'Period 1 — This is...';
+  document.getElementById('intro-visual').textContent = intro.period1.visual;
+  document.getElementById('intro-text').textContent = intro.period1.text;
+  document.getElementById('intro-sub').textContent = intro.period1.sub;
+  document.getElementById('intro-choices').innerHTML = '';
+  document.getElementById('intro-choices').style.display = 'none';
+  const nextBtn = document.getElementById('intro-next-btn');
+  nextBtn.textContent = 'I see it! ✋';
+  nextBtn.style.display = 'block';
+}
+
+function renderIntroPeriod2(intro) {
+  if (!intro.period2) { startActualGame(pendingGame); return; }
+  introPhase = 2;
+  document.getElementById('period-label').textContent = 'Period 2 — Show me...';
+  document.getElementById('intro-visual').textContent = '';
+  document.getElementById('intro-text').textContent = intro.period2.question;
+  document.getElementById('intro-sub').textContent = '';
+  document.getElementById('intro-next-btn').style.display = 'none';
+
+  const choicesEl = document.getElementById('intro-choices');
+  choicesEl.innerHTML = '';
+  choicesEl.style.display = 'grid';
+
+  intro.period2.choices.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'intro-choice-btn';
+    if (intro.period2.svgs && intro.period2.svgs[choice]) {
+      btn.innerHTML = intro.period2.svgs[choice] + '<div style="font-size:11px;font-weight:900;margin-top:4px;color:#4A2800">' + choice.toUpperCase() + '</div>';
+    } else {
+      btn.textContent = choice.toUpperCase();
+    }
+    btn.addEventListener('click', () => {
+      const isCorrect = choice === intro.period2.correct;
+      btn.classList.add(isCorrect ? 'correct' : 'wrong');
+      if (isCorrect) {
+        setTimeout(() => startActualGame(pendingGame), 800);
+      } else {
+        choicesEl.querySelectorAll('.intro-choice-btn').forEach(b => {
+          const label = b.querySelector('div');
+          const text = label ? label.textContent.toLowerCase() : b.textContent.toLowerCase();
+          if (text === intro.period2.correct) b.classList.add('correct');
+        });
+        setTimeout(() => startActualGame(pendingGame), 1200);
+      }
+    });
+    choicesEl.appendChild(btn);
+  });
+}
+
+function selectWork(gameType) { showIntro(gameType); }
+
+async function startActualGame(gameType) {
   currentGame = gameType; questionNumber = 1; answered = false;
   const bar = document.getElementById('game-bar');
   const body = document.getElementById('game-body');
@@ -95,7 +230,7 @@ async function startGame(gameType) {
   body.style.background = GAME_COLORS[gameType];
   document.getElementById('game-title').textContent = GAME_NAMES[gameType];
   try {
-    const res = await fetch(`${API}/game/${gameType}/start/${CHILD_ID}`, { method: 'POST' });
+    const res = await fetch(API + '/game/' + gameType + '/start/' + CHILD_ID, { method: 'POST' });
     currentSession = await res.json();
     showScreen('game');
     await loadQuestion();
@@ -107,48 +242,74 @@ async function loadQuestion() {
   document.getElementById('feedback').style.display = 'none';
   document.getElementById('choices').innerHTML = '';
   try {
-    const res = await fetch(`${API}/game/${currentGame}/question/${currentSession.id}/${questionNumber}`);
+    const res = await fetch(API + '/game/' + currentGame + '/question/' + currentSession.id + '/' + questionNumber);
     currentQuestion = await res.json();
     renderQuestion(currentQuestion);
   } catch(e) { console.error('Failed to load:', e); }
 }
 
+function playCountSounds(count) {
+  const notes = [523, 587, 659, 698, 784, 880, 988, 1047, 1175, 1319,
+                 1397, 1568, 1760, 1976, 2093, 2349, 2637, 2794, 3136, 3520];
+  for (let i = 0; i < count; i++) {
+    setTimeout(function(idx) {
+      return function() {
+        try {
+          const ctx = new AudioContext();
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.connect(g); g.connect(ctx.destination);
+          o.type = 'sine';
+          o.frequency.setValueAtTime(notes[idx] || 523, ctx.currentTime);
+          g.gain.setValueAtTime(0.4, ctx.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+          o.start(); o.stop(ctx.currentTime + 0.25);
+        } catch(e) {}
+      };
+    }(i), i * 300);
+  }
+}
+
 function renderQuestion(q) {
   const pct = ((questionNumber - 1) / q.totalQuestions) * 100;
   document.getElementById('prog-fill').style.width = pct + '%';
-  document.getElementById('q-count').textContent = `Question ${questionNumber} of ${q.totalQuestions}`;
-  document.getElementById('score-display').textContent = `Score: ${q.currentScore}`;
+  document.getElementById('q-count').textContent = 'Question ' + questionNumber + ' of ' + q.totalQuestions;
+  document.getElementById('score-display').textContent = 'Score: ' + q.currentScore;
   document.getElementById('q-hint').textContent = q.questionText;
 
   const animEl = document.getElementById('q-anim');
   const choicesEl = document.getElementById('choices');
   choicesEl.innerHTML = '';
 
-  const emoji = getEmoji(q.pixabayKeyword);
+  const animalKey = q.pixabayKeyword.toLowerCase();
+  const animalSound = ANIMAL_SOUNDS[animalKey];
 
   if (currentGame === 'sorting-tray') {
-    animEl.innerHTML = `<span class="big-emoji" style="font-size:120px">${emoji}</span>`;
+    const emoji = ANIMAL_EMOJIS[animalKey] || getEmoji(q.pixabayKeyword);
+    animEl.innerHTML = '<span class="big-emoji" style="font-size:110px">' + emoji + '</span>';
+    document.getElementById('q-hint').textContent = 'What sound does the ' + q.correctAnswer + ' make?';
+
     const hearBtn = document.createElement('button');
     hearBtn.className = 'hear-btn';
-    hearBtn.textContent = '🔊 Hear the word!';
-    hearBtn.addEventListener('click', () => speakWord(q.correctAnswer));
+    hearBtn.textContent = '🔊 Hear the sound!';
+    hearBtn.addEventListener('click', function() { speakAnimalSound(animalKey, q.correctAnswer, animalSound); });
     choicesEl.appendChild(hearBtn);
 
     const confirmDiv = document.createElement('div');
     confirmDiv.className = 'parent-confirm';
-    confirmDiv.innerHTML = '<div class="confirm-label">Did Nishan say it?</div>';
+    confirmDiv.innerHTML = '<div class="confirm-label">Did Nishan make the sound?</div>';
     const confirmRow = document.createElement('div');
     confirmRow.className = 'confirm-row';
 
     const yesBtn = document.createElement('button');
     yesBtn.className = 'confirm-btn correct-btn';
     yesBtn.textContent = '✅ Yes!';
-    yesBtn.addEventListener('click', () => submitAnswer('correct', yesBtn));
+    yesBtn.addEventListener('click', function() { submitAnswer('correct', yesBtn); });
 
     const noBtn = document.createElement('button');
     noBtn.className = 'confirm-btn wrong-btn';
     noBtn.textContent = '❌ Not yet';
-    noBtn.addEventListener('click', () => submitAnswer('wrong', noBtn));
+    noBtn.addEventListener('click', function() { submitAnswer('wrong', noBtn); });
 
     confirmRow.appendChild(yesBtn);
     confirmRow.appendChild(noBtn);
@@ -158,29 +319,30 @@ function renderQuestion(q) {
   }
 
   if (currentGame === 'sound-safari') {
-    animEl.innerHTML = `
-      <span class="big-emoji">${emoji}</span>
-      <span class="anim-letter">${q.correctAnswer.toUpperCase()}</span>`;
-    setTimeout(() => speakWord(q.correctAnswer), 600);
+    const sfEmoji = getEmoji(q.pixabayKeyword);
+    animEl.innerHTML = '<span class="big-emoji">' + sfEmoji + '</span><span class="anim-letter">' + q.correctAnswer.toUpperCase() + '</span>';
+    setTimeout(function() { speakWord(q.correctAnswer); }, 600);
   } else if (currentGame === 'berry-basket') {
+    const bbEmoji = getEmoji(q.pixabayKeyword);
     const count = parseInt(q.correctAnswer);
     let emojis = '';
-    for (let i = 0; i < count; i++) emojis += `<span class="count-emoji">${emoji}</span>`;
-    animEl.innerHTML = `<div class="emoji-count-row">${emojis}</div><div class="count-number">${count}</div>`;
+    for (let i = 0; i < count; i++) emojis += '<span class="count-emoji">' + bbEmoji + '</span>';
+    animEl.innerHTML = '<div class="emoji-count-row">' + emojis + '</div><div class="count-number">' + count + '</div>';
+    setTimeout(function() { playCountSounds(count); }, 400);
   } else if (currentGame === 'shape-village') {
     const svg = SHAPE_SVGS[q.correctAnswer.toLowerCase()] || SHAPE_SVGS['circle'];
-    animEl.innerHTML = `<div class="anim-shape">${svg}</div>`;
+    animEl.innerHTML = '<div class="anim-shape">' + svg + '</div>';
   }
 
-  q.choices.forEach(choice => {
+  q.choices.forEach(function(choice) {
     const btn = document.createElement('button');
     btn.className = 'choice-btn';
     if (currentGame === 'shape-village' && SHAPE_SVGS[choice.toLowerCase()]) {
-      btn.innerHTML = `<div class="choice-shape">${SHAPE_SVGS[choice.toLowerCase()]}</div><div class="choice-label">${choice.toUpperCase()}</div>`;
+      btn.innerHTML = '<div class="choice-shape">' + SHAPE_SVGS[choice.toLowerCase()] + '</div><div class="choice-label">' + choice.toUpperCase() + '</div>';
     } else {
       btn.textContent = choice.toUpperCase();
     }
-    btn.addEventListener('click', () => submitAnswer(choice, btn));
+    btn.addEventListener('click', function() { submitAnswer(choice, btn); });
     choicesEl.appendChild(btn);
   });
 }
@@ -191,9 +353,24 @@ function speakWord(word) {
     const u = new SpeechSynthesisUtterance(word);
     u.rate = 0.6; u.pitch = 1.5; u.volume = 1;
     const voices = window.speechSynthesis.getVoices();
-    const kidVoice = voices.find(v =>
-      v.name.includes('Samantha') || v.name.includes('Karen') ||
-      v.name.includes('Moira') || v.lang === 'en-US');
+    const kidVoice = voices.find(function(v) {
+      return v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Moira') || v.lang === 'en-US';
+    });
+    if (kidVoice) u.voice = kidVoice;
+    window.speechSynthesis.speak(u);
+  } catch(e) {}
+}
+
+function speakAnimalSound(animalKey, animalName, sound) {
+  try {
+    window.speechSynthesis.cancel();
+    const voices = window.speechSynthesis.getVoices();
+    const kidVoice = voices.find(function(v) {
+      return v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Moira') || v.lang === 'en-US';
+    });
+    const phrase = sound ? 'The ' + animalName + ' says ' + sound : animalName;
+    const u = new SpeechSynthesisUtterance(phrase);
+    u.rate = 0.55; u.pitch = 1.3; u.volume = 1;
     if (kidVoice) u.voice = kidVoice;
     window.speechSynthesis.speak(u);
   } catch(e) {}
@@ -208,7 +385,7 @@ async function submitAnswer(given, btn) {
   if (currentGame !== 'sorting-tray') {
     btn.classList.add(isCorrect ? 'correct' : 'wrong');
     if (!isCorrect) {
-      document.querySelectorAll('.choice-btn').forEach(b => {
+      document.querySelectorAll('.choice-btn').forEach(function(b) {
         const label = b.querySelector('.choice-label');
         const match = label
           ? label.textContent.toLowerCase() === currentQuestion.correctAnswer.toLowerCase()
@@ -222,7 +399,7 @@ async function submitAnswer(given, btn) {
   fb.textContent = isCorrect ? '🌟 Correct! Great job, Nishan!' : '💪 Keep practicing!';
   fb.style.display = 'block';
   try {
-    await fetch(`${API}/game/answer`, {
+    await fetch(API + '/game/answer', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         sessionId: currentSession.id, contentId: currentQuestion.contentId,
@@ -230,18 +407,21 @@ async function submitAnswer(given, btn) {
       })
     });
   } catch(e) {}
-  setTimeout(() => {
+  setTimeout(function() {
     if (questionNumber >= currentQuestion.totalQuestions) showComplete();
     else { questionNumber++; loadQuestion(); }
   }, 1800);
 }
 
 async function showComplete() {
-  document.getElementById('complete-score').textContent =
-    `You scored ${currentQuestion.currentScore} points!`;
+  document.getElementById('complete-score').textContent = 'You scored ' + currentQuestion.currentScore + ' points!';
   playComplete();
+  markGameComplete(currentGame);
+  if (completedGames.size === 4) {
+    document.getElementById('work-cycle-badge').style.display = 'block';
+  }
   try {
-    const res = await fetch(`${API}/activities/recommend/${GAME_TYPE_MAP[currentGame]}`);
+    const res = await fetch(API + '/activities/recommend/' + GAME_TYPE_MAP[currentGame]);
     const activity = await res.json();
     document.getElementById('activity-visual').textContent = activity.visualScene || '';
     document.getElementById('activity-emoji').textContent = activity.emoji || '';
@@ -253,7 +433,7 @@ async function showComplete() {
     document.getElementById('show-rec1').textContent = activity.showRec1 || '';
     document.getElementById('show-rec2').textContent = activity.showRec2 || '';
     document.getElementById('activity-card').style.display = 'block';
-  } catch(e) { console.error('Activity fetch failed:', e); }
+  } catch(e) {}
   showScreen('complete');
 }
 
@@ -275,7 +455,7 @@ function playSound(correct) {
 function playComplete() {
   try {
     const ctx = new AudioContext();
-    [523, 659, 784].forEach((freq, i) => {
+    [523, 659, 784].forEach(function(freq, i) {
       const o = ctx.createOscillator(), g = ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
       g.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
@@ -288,9 +468,15 @@ function playComplete() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('btn-sound-safari').addEventListener('click', () => startGame('sound-safari'));
-  document.getElementById('btn-berry-basket').addEventListener('click', () => startGame('berry-basket'));
-  document.getElementById('btn-shape-village').addEventListener('click', () => startGame('shape-village'));
-  document.getElementById('btn-sorting-tray').addEventListener('click', () => startGame('sorting-tray'));
-  document.getElementById('btn-play-again').addEventListener('click', () => showMenu());
+  document.getElementById('btn-sound-safari').addEventListener('click', function() { selectWork('sound-safari'); });
+  document.getElementById('btn-berry-basket').addEventListener('click', function() { selectWork('berry-basket'); });
+  document.getElementById('btn-shape-village').addEventListener('click', function() { selectWork('shape-village'); });
+  document.getElementById('btn-sorting-tray').addEventListener('click', function() { selectWork('sorting-tray'); });
+  document.getElementById('intro-next-btn').addEventListener('click', function() {
+    const intro = INTRO_CONTENT[pendingGame];
+    if (introPhase === 1) renderIntroPeriod2(intro);
+    else startActualGame(pendingGame);
+  });
+  document.getElementById('btn-play-again').addEventListener('click', function() { showMenu(); });
+  renderPinkTower(currentDifficulty);
 });
