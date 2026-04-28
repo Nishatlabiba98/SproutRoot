@@ -738,3 +738,365 @@ function renderParentDashboard(d) {
   document.getElementById('parent-loading').style.display = 'none';
   body.innerHTML = html;
 }
+
+// ── SPLASH SCREEN ────────────────────────────────────────────────────────
+var FLOATIES = [
+  'A','B','C','D','S','M','T',
+  '1','2','3','4','5',
+  '⭕','🔷','⭐','🔺',
+  '🐄','🐶','🐱','🐸','🦁','🐘'
+];
+
+function initSplash() {
+  var container = document.getElementById('splash-floaties');
+  if (!container) return;
+  for (var i = 0; i < 18; i++) {
+    var el = document.createElement('div');
+    el.className = 'floatie';
+    el.textContent = FLOATIES[Math.floor(Math.random() * FLOATIES.length)];
+    el.style.left = (Math.random() * 90) + '%';
+    el.style.animationDuration = (6 + Math.random() * 8) + 's';
+    el.style.animationDelay = (Math.random() * 8) + 's';
+    el.style.fontSize = (20 + Math.random() * 20) + 'px';
+    container.appendChild(el);
+  }
+}
+
+function showDedication() {
+  showScreen('dedication');
+}
+
+// ── PARENT DASHBOARD ─────────────────────────────────────────────────────
+var logoTapCount = 0;
+var logoTapTimer = null;
+var pinEntry = '';
+var PIN = '1234';
+
+function initLogoTap() {
+  var logo = document.getElementById('sprout-logo-tap');
+  if (!logo) return;
+  logo.addEventListener('click', function() {
+    logoTapCount++;
+    if (logoTapTimer) clearTimeout(logoTapTimer);
+    logoTapTimer = setTimeout(function() { logoTapCount = 0; }, 1500);
+    if (logoTapCount >= 3) {
+      logoTapCount = 0;
+      showPinOverlay();
+    }
+  });
+}
+
+function showPinOverlay() {
+  pinEntry = '';
+  updatePinDots();
+  document.getElementById('pin-error').style.display = 'none';
+  document.getElementById('pin-overlay').style.display = 'flex';
+}
+
+function pinPress(digit) {
+  if (pinEntry.length >= 4) return;
+  pinEntry += digit;
+  updatePinDots();
+  if (pinEntry.length === 4) {
+    setTimeout(function() {
+      if (pinEntry === PIN) {
+        document.getElementById('pin-overlay').style.display = 'none';
+        loadParentDashboard();
+      } else {
+        document.getElementById('pin-error').style.display = 'block';
+        pinEntry = '';
+        updatePinDots();
+      }
+    }, 200);
+  }
+}
+
+function pinClear() {
+  pinEntry = '';
+  updatePinDots();
+  document.getElementById('pin-error').style.display = 'none';
+}
+
+function pinCancel() {
+  pinEntry = '';
+  document.getElementById('pin-overlay').style.display = 'none';
+}
+
+function updatePinDots() {
+  var dots = document.querySelectorAll('.pin-dot');
+  dots.forEach(function(dot, i) {
+    dot.classList.toggle('filled', i < pinEntry.length);
+  });
+}
+
+var GAME_LABELS = {
+  'SOUND_SAFARI': '🔤 Sound Safari',
+  'BERRY_BASKET': '🔢 Berry Basket',
+  'SHAPE_VILLAGE': '🔷 Shape Village',
+  'SORTING_TRAY': '🐾 Sorting Tray'
+};
+
+async function loadParentDashboard() {
+  showScreen('parent');
+  document.getElementById('parent-loading').style.display = 'block';
+  document.getElementById('parent-loading').textContent = 'Loading...';
+  try {
+    var res = await fetch(API + '/parent/dashboard/' + CHILD_ID);
+    var d = await res.json();
+    renderParentDashboard(d);
+  } catch(e) {
+    document.getElementById('parent-loading').textContent = 'Failed to load.';
+  }
+}
+
+function renderParentDashboard(d) {
+  var overall = d.totalCorrect + d.totalWrong > 0
+    ? Math.round(d.totalCorrect * 100 / (d.totalCorrect + d.totalWrong)) : 0;
+
+  var html = '';
+
+  html += '<div class="stat-card">';
+  html += '<div class="stat-card-title">🌱 Nishan\'s Profile</div>';
+  html += '<div class="stat-row"><span class="stat-label">Age</span><span class="stat-value">' + d.childAgeMonths + ' months</span></div>';
+  html += '<div class="stat-row"><span class="stat-label">Total Sessions</span><span class="stat-value">' + d.totalSessions + '</span></div>';
+  html += '<div class="stat-row"><span class="stat-label">Overall Accuracy</span><span class="stat-value">' + overall + '%</span></div>';
+  html += '<div class="pct-bar"><div class="pct-fill" style="width:' + overall + '%"></div></div>';
+  html += '</div>';
+
+  html += '<div class="stat-card">';
+  html += '<div class="stat-card-title">📊 ELOF Domains</div>';
+  Object.keys(d.elofDomains).forEach(function(domain) {
+    html += '<div class="stat-row"><span class="stat-label">' + domain + '</span><span class="stat-value">' + d.elofDomains[domain] + ' correct</span></div>';
+  });
+  html += '</div>';
+
+  html += '<div class="stat-card">';
+  html += '<div class="stat-card-title">🎮 Game Breakdown</div>';
+  Object.keys(d.gameStats).forEach(function(key) {
+    var g = d.gameStats[key];
+    html += '<div style="margin-bottom:10px">';
+    html += '<div class="stat-row"><span class="stat-label">' + (GAME_LABELS[key] || key) + '</span><span class="stat-value">' + g.pct + '%</span></div>';
+    html += '<div style="font-size:10px;color:#8B6B3A;margin-bottom:3px">' + g.sessions + ' sessions · ' + g.correct + ' correct · ' + g.wrong + ' wrong</div>';
+    html += '<div class="pct-bar"><div class="pct-fill" style="width:' + g.pct + '%;background:' + (g.pct >= 80 ? '#00A651' : g.pct >= 50 ? '#F07820' : '#CC1A1A') + '"></div></div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  if (d.topStruggles && d.topStruggles.length > 0) {
+    html += '<div class="stat-card">';
+    html += '<div class="stat-card-title">💪 Needs More Practice</div>';
+    d.topStruggles.forEach(function(s) {
+      var emoji = ANIMAL_EMOJIS[s.emoji] || EMOJI_MAP[s.emoji] || '🎯';
+      html += '<div class="struggle-item">';
+      html += '<div class="struggle-emoji">' + emoji + '</div>';
+      html += '<div class="struggle-label">' + s.contentValue + ' <span style="color:#8B6B3A;font-size:10px">(' + s.contentType + ')</span></div>';
+      html += '<div class="struggle-count">' + s.wrongCount + ' misses</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  if (d.recentSessions && d.recentSessions.length > 0) {
+    html += '<div class="stat-card">';
+    html += '<div class="stat-card-title">🕐 Recent Sessions</div>';
+    d.recentSessions.forEach(function(s) {
+      html += '<div class="session-row">';
+      html += '<span style="font-weight:700;color:#4A2800">' + (GAME_LABELS[s.gameType] || s.gameType) + '</span>';
+      html += '<span style="color:#8B6B3A">' + s.date + '</span>';
+      html += '<span style="font-weight:900;color:#CC1A1A">' + s.score + ' pts</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('parent-loading').style.display = 'none';
+  document.getElementById('parent-body').innerHTML = html;
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  renderPinkTower(currentDifficulty);
+  initSplash();
+  initLogoTap();
+});
+
+// ── SPLASH SCREEN ────────────────────────────────────────────────────────
+var FLOATIES = [
+  'A','B','C','D','S','M','T',
+  '1','2','3','4','5',
+  '⭕','🔷','⭐','🔺',
+  '🐄','🐶','🐱','🐸','🦁','🐘'
+];
+
+function initSplash() {
+  var container = document.getElementById('splash-floaties');
+  if (!container) return;
+  for (var i = 0; i < 18; i++) {
+    var el = document.createElement('div');
+    el.className = 'floatie';
+    el.textContent = FLOATIES[Math.floor(Math.random() * FLOATIES.length)];
+    el.style.left = (Math.random() * 90) + '%';
+    el.style.animationDuration = (6 + Math.random() * 8) + 's';
+    el.style.animationDelay = (Math.random() * 8) + 's';
+    el.style.fontSize = (20 + Math.random() * 20) + 'px';
+    container.appendChild(el);
+  }
+}
+
+function showDedication() {
+  showScreen('dedication');
+}
+
+// ── PARENT DASHBOARD ─────────────────────────────────────────────────────
+var logoTapCount = 0;
+var logoTapTimer = null;
+var pinEntry = '';
+var PIN = '1234';
+
+function initLogoTap() {
+  var logo = document.getElementById('sprout-logo-tap');
+  if (!logo) return;
+  logo.addEventListener('click', function() {
+    logoTapCount++;
+    if (logoTapTimer) clearTimeout(logoTapTimer);
+    logoTapTimer = setTimeout(function() { logoTapCount = 0; }, 1500);
+    if (logoTapCount >= 3) {
+      logoTapCount = 0;
+      showPinOverlay();
+    }
+  });
+}
+
+function showPinOverlay() {
+  pinEntry = '';
+  updatePinDots();
+  document.getElementById('pin-error').style.display = 'none';
+  document.getElementById('pin-overlay').style.display = 'flex';
+}
+
+function pinPress(digit) {
+  if (pinEntry.length >= 4) return;
+  pinEntry += digit;
+  updatePinDots();
+  if (pinEntry.length === 4) {
+    setTimeout(function() {
+      if (pinEntry === PIN) {
+        document.getElementById('pin-overlay').style.display = 'none';
+        loadParentDashboard();
+      } else {
+        document.getElementById('pin-error').style.display = 'block';
+        pinEntry = '';
+        updatePinDots();
+      }
+    }, 200);
+  }
+}
+
+function pinClear() {
+  pinEntry = '';
+  updatePinDots();
+  document.getElementById('pin-error').style.display = 'none';
+}
+
+function pinCancel() {
+  pinEntry = '';
+  document.getElementById('pin-overlay').style.display = 'none';
+}
+
+function updatePinDots() {
+  var dots = document.querySelectorAll('.pin-dot');
+  dots.forEach(function(dot, i) {
+    dot.classList.toggle('filled', i < pinEntry.length);
+  });
+}
+
+var GAME_LABELS = {
+  'SOUND_SAFARI': '🔤 Sound Safari',
+  'BERRY_BASKET': '🔢 Berry Basket',
+  'SHAPE_VILLAGE': '🔷 Shape Village',
+  'SORTING_TRAY': '🐾 Sorting Tray'
+};
+
+async function loadParentDashboard() {
+  showScreen('parent');
+  document.getElementById('parent-loading').style.display = 'block';
+  document.getElementById('parent-loading').textContent = 'Loading...';
+  try {
+    var res = await fetch(API + '/parent/dashboard/' + CHILD_ID);
+    var d = await res.json();
+    renderParentDashboard(d);
+  } catch(e) {
+    document.getElementById('parent-loading').textContent = 'Failed to load.';
+  }
+}
+
+function renderParentDashboard(d) {
+  var overall = d.totalCorrect + d.totalWrong > 0
+    ? Math.round(d.totalCorrect * 100 / (d.totalCorrect + d.totalWrong)) : 0;
+
+  var html = '';
+
+  html += '<div class="stat-card">';
+  html += '<div class="stat-card-title">🌱 Nishan\'s Profile</div>';
+  html += '<div class="stat-row"><span class="stat-label">Age</span><span class="stat-value">' + d.childAgeMonths + ' months</span></div>';
+  html += '<div class="stat-row"><span class="stat-label">Total Sessions</span><span class="stat-value">' + d.totalSessions + '</span></div>';
+  html += '<div class="stat-row"><span class="stat-label">Overall Accuracy</span><span class="stat-value">' + overall + '%</span></div>';
+  html += '<div class="pct-bar"><div class="pct-fill" style="width:' + overall + '%"></div></div>';
+  html += '</div>';
+
+  html += '<div class="stat-card">';
+  html += '<div class="stat-card-title">📊 ELOF Domains</div>';
+  Object.keys(d.elofDomains).forEach(function(domain) {
+    html += '<div class="stat-row"><span class="stat-label">' + domain + '</span><span class="stat-value">' + d.elofDomains[domain] + ' correct</span></div>';
+  });
+  html += '</div>';
+
+  html += '<div class="stat-card">';
+  html += '<div class="stat-card-title">🎮 Game Breakdown</div>';
+  Object.keys(d.gameStats).forEach(function(key) {
+    var g = d.gameStats[key];
+    html += '<div style="margin-bottom:10px">';
+    html += '<div class="stat-row"><span class="stat-label">' + (GAME_LABELS[key] || key) + '</span><span class="stat-value">' + g.pct + '%</span></div>';
+    html += '<div style="font-size:10px;color:#8B6B3A;margin-bottom:3px">' + g.sessions + ' sessions · ' + g.correct + ' correct · ' + g.wrong + ' wrong</div>';
+    html += '<div class="pct-bar"><div class="pct-fill" style="width:' + g.pct + '%;background:' + (g.pct >= 80 ? '#00A651' : g.pct >= 50 ? '#F07820' : '#CC1A1A') + '"></div></div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  if (d.topStruggles && d.topStruggles.length > 0) {
+    html += '<div class="stat-card">';
+    html += '<div class="stat-card-title">💪 Needs More Practice</div>';
+    d.topStruggles.forEach(function(s) {
+      var emoji = ANIMAL_EMOJIS[s.emoji] || EMOJI_MAP[s.emoji] || '🎯';
+      html += '<div class="struggle-item">';
+      html += '<div class="struggle-emoji">' + emoji + '</div>';
+      html += '<div class="struggle-label">' + s.contentValue + ' <span style="color:#8B6B3A;font-size:10px">(' + s.contentType + ')</span></div>';
+      html += '<div class="struggle-count">' + s.wrongCount + ' misses</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  if (d.recentSessions && d.recentSessions.length > 0) {
+    html += '<div class="stat-card">';
+    html += '<div class="stat-card-title">🕐 Recent Sessions</div>';
+    d.recentSessions.forEach(function(s) {
+      html += '<div class="session-row">';
+      html += '<span style="font-weight:700;color:#4A2800">' + (GAME_LABELS[s.gameType] || s.gameType) + '</span>';
+      html += '<span style="color:#8B6B3A">' + s.date + '</span>';
+      html += '<span style="font-weight:900;color:#CC1A1A">' + s.score + ' pts</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('parent-loading').style.display = 'none';
+  document.getElementById('parent-body').innerHTML = html;
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  renderPinkTower(currentDifficulty);
+  initSplash();
+  initLogoTap();
+});

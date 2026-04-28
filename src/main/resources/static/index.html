@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SproutRoot 🌱</title>
-  <link rel="stylesheet" href="/css/main.css?v=7"/>
+  <link rel="stylesheet" href="/css/main.css?v=9"/>
 </head>
 <body>
 
@@ -38,8 +38,93 @@
     </div>
   </div>
 
+  <!-- SCREEN 1: SPLASH -->
+  <div id="screen-splash" class="screen active">
+    <div class="splash-container">
+      <div class="splash-floaties" id="splash-floaties"></div>
+      <div class="splash-center">
+        <div class="splash-logo">🌱</div>
+        <div class="splash-title">SproutRoot</div>
+        <div class="splash-sub">A Montessori Learning World</div>
+        <button class="splash-btn" onclick="showScreen('dedication')">Tap to Begin ✨</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: DEDICATION -->
+  <div id="screen-dedication" class="screen">
+    <div class="dedication-container">
+      <div class="dedication-top">
+        <div class="dedication-sprout">🌱</div>
+        <div class="dedication-title">Why SproutRoot?</div>
+      </div>
+      <div class="dedication-body">
+        <div class="dedication-quote">
+          "I grew up watching children learn beautiful things through gray pencils and bare white paper, and I never forgot that frustration. When I became a mother, I chose Montessori — because real learning happens through touch, movement, and independence. When my scattered activity notes led me to build CradleNotes, I realized the idea deserved more — and SproutRoot became my answer: a full-stack, research-backed learning app built from scratch, for my son Nishan."
+        </div>
+        <div class="dedication-divider"></div>
+        <div class="dedication-maria">
+          <div class="dedication-maria-name">🕊️ Maria Montessori</div>
+          <div class="dedication-maria-quote">
+            "The child leads, the environment teaches, and the hands educate the mind. SproutRoot is that belief in code — a wooden shelf instead of a worksheet, a chime instead of a red mark, and a parent who observes instead of corrects."
+          </div>
+        </div>
+        <div class="dedication-nishan">
+          <div class="dedication-nishan-emoji">👶</div>
+          <div class="dedication-nishan-text">For Nishan 🌱</div>
+        </div>
+      </div>
+      <button class="dedication-start-btn" onclick="showScreen('pedagogy')">Next →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: PEDAGOGY / THREE PERIOD LESSON -->
+  <div id="screen-pedagogy" class="screen">
+    <div class="dedication-container">
+      <div class="dedication-top" style="background:#3D8A20">
+        <div class="dedication-sprout">📖</div>
+        <div class="dedication-title">The Three Period Lesson</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.8);font-weight:700;margin-top:4px">David Gettman's Basic Montessori</div>
+      </div>
+      <div class="dedication-body">
+
+        <div class="dedication-quote">
+          "The Three Period Lesson works because it mirrors how the toddler brain actually builds memory — encoding first, retrieval through action second, and verbal recall only when the pathway is strong enough to support it. Rushing to 'What is this?' before the concept is consolidated causes anxiety and shuts learning down — common in flashcard apps. SproutRoot follows all three periods every session: Period 1 introduces, Period 2 lets Nishan show without pressure, and the game itself is Period 3 — independent recall through play."
+        </div>
+
+        <div class="dedication-divider"></div>
+
+        <div class="pedagogy-period">
+          <div class="pedagogy-num" style="background:#1A7CE8">1</div>
+          <div class="pedagogy-content">
+            <div class="pedagogy-title">This is...</div>
+            <div class="pedagogy-desc">The concept is introduced with sight, sound, and touch simultaneously. Three sensory channels fire at once — creating a richer memory trace.</div>
+          </div>
+        </div>
+
+        <div class="pedagogy-period">
+          <div class="pedagogy-num" style="background:#F07820">2</div>
+          <div class="pedagogy-content">
+            <div class="pedagogy-title">Show me...</div>
+            <div class="pedagogy-desc">The child identifies through action — tapping, pointing, or doing — with no verbal pressure and no wrong answer feedback. Motor retrieval strengthens the neural pathway.</div>
+          </div>
+        </div>
+
+        <div class="pedagogy-period">
+          <div class="pedagogy-num" style="background:#CC1A1A">3</div>
+          <div class="pedagogy-content">
+            <div class="pedagogy-title">What is this?</div>
+            <div class="pedagogy-desc">Only now does the child attempt independent verbal recall — when the pathway is strong enough. This is the game itself. Every question round is Period 3.</div>
+          </div>
+        </div>
+
+      </div>
+      <button class="dedication-start-btn" onclick="showMenu()">Enter SproutRoot 🌱</button>
+    </div>
+  </div>
+
   <!-- PREPARED SHELF MENU -->
-  <div id="screen-menu" class="screen active">
+  <div id="screen-menu" class="screen">
     <div class="shelf-header">
       <div class="sprout-logo" id="sprout-logo-tap">🌱</div>
       <div class="sprout-title">SproutRoot</div>
@@ -48,16 +133,13 @@
         <span>Nishan</span>
       </div>
     </div>
-
     <div class="shelf-area">
       <div class="choose-work">Choose your work</div>
       <div class="choose-sub">Tap a tray to begin 👇</div>
-
       <div class="pink-tower-row">
         <div class="pink-tower" id="pink-tower"></div>
         <div class="tower-label" id="tower-label">Level 1</div>
       </div>
-
       <div class="shelf">
         <div class="shelf-plank-top"></div>
         <div class="shelf-row">
@@ -77,7 +159,6 @@
             <div class="tray-name">Sound Safari</div>
             <div class="tray-sub">✨ Letters &amp; Sounds</div>
           </button>
-
           <button class="tray" id="btn-berry-basket" onclick="selectWork('berry-basket')">
             <div class="tray-icon">
               <svg width="70" height="60" viewBox="0 0 70 60">
@@ -96,9 +177,7 @@
             <div class="tray-sub">🔢 Numbers &amp; Counting</div>
           </button>
         </div>
-
         <div class="shelf-plank"></div>
-
         <div class="shelf-row">
           <button class="tray" id="btn-shape-village" onclick="selectWork('shape-village')">
             <div class="tray-icon">
@@ -111,7 +190,6 @@
             <div class="tray-name">Shape Village</div>
             <div class="tray-sub">🔷 Shapes &amp; Colors</div>
           </button>
-
           <button class="tray" id="btn-sorting-tray" onclick="selectWork('sorting-tray')">
             <div class="tray-icon">
               <svg width="70" height="60" viewBox="0 0 70 60">
@@ -128,10 +206,8 @@
             <div class="tray-sub">🐾 Animal Sounds</div>
           </button>
         </div>
-
         <div class="shelf-plank"></div>
       </div>
-
       <div class="work-cycle-row">
         <div class="cycle-label">Today's work cycle</div>
         <div class="cycle-dots">
@@ -196,13 +272,11 @@
       <div class="complete-emoji">⭐</div>
       <div class="complete-title">Amazing job, Nishan!</div>
       <div class="complete-score" id="complete-score">You scored 50 points!</div>
-
       <div class="work-cycle-badge" id="work-cycle-badge" style="display:none">
         <div class="badge-sun">🌟</div>
         <div class="badge-title">Complete Work Cycle!</div>
         <div class="badge-sub">Nishan finished all 4 works today!</div>
       </div>
-
       <div class="activity-card" id="activity-card" style="display:none">
         <div class="activity-header">🌿 Try this at home!</div>
         <div class="activity-visual" id="activity-visual"></div>
@@ -224,7 +298,6 @@
           <div id="show-rec2" class="rec-item"></div>
         </div>
       </div>
-
       <button class="big-btn green-btn" id="btn-play-again" onclick="showMenu()">Choose more work 🌱</button>
     </div>
   </div>
@@ -241,6 +314,6 @@
     </div>
   </div>
 
-  <script src="/js/app.js?v=7"></script>
+  <script src="/js/app.js?v=9"></script>
 </body>
 </html>
