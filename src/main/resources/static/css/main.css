@@ -239,3 +239,104 @@ body {
 .correct-btn { background: rgba(24,168,74,.6); }
 .wrong-btn { background: rgba(204,26,26,.6); }
 .confirm-btn:hover { transform: scale(1.05); }
+.pin-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid #8B6B3A; background: #FFF8E8;
+  transition: background .2s;
+}
+.pin-dot.filled { background: #CC1A1A; border-color: #CC1A1A; }
+.pin-btn {
+  padding: 16px; border-radius: 14px; border: 2px solid #C8A060;
+  background: #FFF8E8; font-size: 20px; font-weight: 900;
+  color: #4A2800; cursor: pointer; font-family: inherit;
+  box-shadow: 0 3px 0 #8B6B3A; transition: transform .1s;
+}
+.pin-btn:hover { transform: translateY(-2px); }
+.pin-btn:active { transform: translateY(2px); box-shadow: none; }
+
+.stat-card {
+  background: white; border-radius: 16px; border: 2px solid #C8A060;
+  padding: 14px; margin-bottom: 12px;
+  box-shadow: 0 3px 0 #C8A060;
+}
+.stat-card-title {
+  font-size: 11px; font-weight: 900; color: #8B6B3A;
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+}
+.stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.stat-label { font-size: 12px; font-weight: 700; color: #4A2800; }
+.stat-value { font-size: 14px; font-weight: 900; color: #CC1A1A; }
+.pct-bar {
+  height: 10px; background: #F0E8D8; border-radius: 10px;
+  overflow: hidden; margin-top: 4px;
+}
+.pct-fill {
+  height: 100%; border-radius: 10px; background: #00A651;
+  transition: width .6s ease;
+}
+.struggle-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid #F0E8D8;
+}
+.struggle-emoji { font-size: 22px; }
+.struggle-label { font-size: 12px; font-weight: 700; color: #4A2800; flex: 1; }
+.struggle-count { font-size: 12px; font-weight: 900; color: #CC1A1A; }
+.session-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; border-bottom: 1px solid #F0E8D8;
+  font-size: 11px;
+}
+
+.pin-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid #8B6B3A; background: #FFF8E8;
+  transition: background .2s;
+}
+.pin-dot.filled { background: #CC1A1A; border-color: #CC1A1A; }
+.pin-btn {
+  padding: 16px; border-radius: 14px; border: 2px solid #C8A060;
+  background: #FFF8E8; font-size: 20px; font-weight: 900;
+  color: #4A2800; cursor: pointer; font-family: inherit;
+  box-shadow: 0 3px 0 #8B6B3A; transition: transform .1s;
+}
+.pin-btn:hover { transform: translateY(-2px); }
+.pin-btn:active { transform: translateY(2px); box-shadow: none; }
+
+.stat-card {
+  background: white; border-radius: 16px; border: 2px solid #C8A060;
+  padding: 14px; margin-bottom: 12px;
+  box-shadow: 0 3px 0 #C8A060;
+}
+.stat-card-title {
+  font-size: 11px; font-weight: 900; color: #8B6B3A;
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+}
+.stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.stat-label { font-size: 12px; font-weight: 700; color: #4A2800; }
+.stat-value { font-size: 14px; font-weight: 900; color: #CC1A1A; }
+.pct-bar {
+  height: 10px; background: #F0E8D8; border-radius: 10px;
+  overflow: hidden; margin-top: 4px;
+}
+.pct-fill {
+  height: 100%; border-radius: 10px; background: #00A651;
+  transition: width .6s ease;
+}
+.struggle-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid #F0E8D8;
+}
+.struggle-emoji { font-size: 22px; }
+.struggle-label { font-size: 12px; font-weight: 700; color: #4A2800; flex: 1; }
+.struggle-count { font-size: 12px; font-weight: 900; color: #CC1A1A; }
+.session-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; border-bottom: 1px solid #F0E8D8;
+  font-size: 11px;
+}

@@ -4,14 +4,44 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SproutRoot 🌱</title>
-  <link rel="stylesheet" href="/css/main.css?v=6"/>
+  <link rel="stylesheet" href="/css/main.css?v=7"/>
 </head>
 <body>
+
+  <!-- PIN OVERLAY -->
+  <div id="pin-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:999;flex-direction:column;align-items:center;justify-content:center">
+    <div style="background:#FFF8E8;border-radius:24px;padding:32px 24px;width:320px;text-align:center;border:3px solid #8B6B3A">
+      <div style="font-size:32px;margin-bottom:8px">🔐</div>
+      <div style="font-size:18px;font-weight:900;color:#4A2800;margin-bottom:4px">Parent Dashboard</div>
+      <div style="font-size:12px;color:#8B6B3A;font-weight:700;margin-bottom:20px">Enter your PIN</div>
+      <div id="pin-dots" style="display:flex;justify-content:center;gap:12px;margin-bottom:20px">
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+        <button class="pin-btn" onclick="pinPress('1')">1</button>
+        <button class="pin-btn" onclick="pinPress('2')">2</button>
+        <button class="pin-btn" onclick="pinPress('3')">3</button>
+        <button class="pin-btn" onclick="pinPress('4')">4</button>
+        <button class="pin-btn" onclick="pinPress('5')">5</button>
+        <button class="pin-btn" onclick="pinPress('6')">6</button>
+        <button class="pin-btn" onclick="pinPress('7')">7</button>
+        <button class="pin-btn" onclick="pinPress('8')">8</button>
+        <button class="pin-btn" onclick="pinPress('9')">9</button>
+        <button class="pin-btn" onclick="pinClear()" style="background:#F0C8C8;border-color:#CC1A1A;color:#CC1A1A">✕</button>
+        <button class="pin-btn" onclick="pinPress('0')">0</button>
+        <button class="pin-btn" onclick="pinCancel()" style="background:#F0E8D8;font-size:11px">Cancel</button>
+      </div>
+      <div id="pin-error" style="color:#CC1A1A;font-size:12px;font-weight:900;display:none">Wrong PIN. Try again.</div>
+    </div>
+  </div>
 
   <!-- PREPARED SHELF MENU -->
   <div id="screen-menu" class="screen active">
     <div class="shelf-header">
-      <div class="sprout-logo">🌱</div>
+      <div class="sprout-logo" id="sprout-logo-tap">🌱</div>
       <div class="sprout-title">SproutRoot</div>
       <div class="nishan-chip">
         <div class="nishan-av">N</div>
@@ -199,6 +229,18 @@
     </div>
   </div>
 
-  <script>function testClick(){ alert("works"); }</script><script src="/js/app.js?v=6"></script>
+  <!-- PARENT DASHBOARD SCREEN -->
+  <div id="screen-parent" class="screen">
+    <div class="shelf-header">
+      <div style="font-size:24px">👩‍🔬</div>
+      <div class="sprout-title">Parent Dashboard</div>
+      <button onclick="showMenu()" style="background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);border-radius:16px;color:white;font-size:12px;font-weight:900;padding:6px 12px;cursor:pointer">← Back</button>
+    </div>
+    <div id="parent-body" style="background:#FFF8E8;padding:16px;border-radius:0 0 28px 28px;border:3px solid #8A0A0A;border-top:none;max-height:80vh;overflow-y:auto">
+      <div id="parent-loading" style="text-align:center;padding:40px;color:#8B6B3A;font-weight:900">Loading...</div>
+    </div>
+  </div>
+
+  <script src="/js/app.js?v=7"></script>
 </body>
 </html>
