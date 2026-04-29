@@ -145,7 +145,7 @@ function showScreen(id) {
   document.getElementById('screen-' + id).classList.add('active');
 }
 
-function showMenu() {
+function showMenu() { // goes straight to shelf after first visit
   showScreen('menu');
   currentSession = null; questionNumber = 1; answered = false;
   document.getElementById('activity-card').style.display = 'none';
@@ -441,7 +441,7 @@ function renderQuestion(q) {
   if (currentGame === 'sound-safari') {
     var sfEmoji = getEmoji(q.pixabayKeyword);
     animEl.innerHTML = '<span class="big-emoji">' + sfEmoji + '</span><span class="anim-letter">' + q.correctAnswer.toUpperCase() + '</span>';
-    setTimeout(function() { speakWord(q.correctAnswer); }, 600);
+    setTimeout(function() { playLetterSound(q.correctAnswer); }, 600);
   } else if (currentGame === 'berry-basket') {
     var bbEmoji = getEmoji(q.pixabayKeyword);
     var count = parseInt(q.correctAnswer);
@@ -1100,3 +1100,21 @@ document.addEventListener('DOMContentLoaded', function() {
   initSplash();
   initLogoTap();
 });
+
+function playLetterSound(letter) {
+  var audio = new Audio('/audio/letters/' + letter.toLowerCase() + '.mp3');
+  audio.onerror = function() { speakWord(letter); };
+  audio.play().catch(function() { speakWord(letter); });
+}
+
+// override showMenu to always go straight to shelf
+var _originalShowMenu = showMenu;
+showMenu = function() {
+  showScreen('menu');
+  currentSession = null; questionNumber = 1; answered = false;
+  var ac = document.getElementById('activity-card');
+  if (ac) ac.style.display = 'none';
+  var wb = document.getElementById('work-cycle-badge');
+  if (wb) wb.style.display = 'none';
+  renderPinkTower(currentDifficulty);
+};
