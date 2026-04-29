@@ -1149,3 +1149,51 @@ function showLyrics(title) {
   document.getElementById('lyrics-body').textContent = lyrics;
   document.getElementById('lyrics-modal').style.display = 'flex';
 }
+
+// ── SPROUTROOT LOADER ────────────────────────────────────────────────────
+(function() {
+  var loader = document.createElement('div');
+  loader.className = 'sprout-loader';
+  loader.id = 'sprout-loader';
+  loader.innerHTML = '<div class="loader-dots"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div><div class="loader-sprout">🌱</div>';
+  document.body.appendChild(loader);
+})();
+
+var _baseShowScreen = showScreen;
+showScreen = function(id) {
+  var loader = document.getElementById('sprout-loader');
+  loader.classList.add('visible');
+  setTimeout(function() {
+    _baseShowScreen(id);
+    setTimeout(function() {
+      loader.classList.remove('visible');
+    }, 150);
+  }, 400);
+};
+
+// fix loader init
+document.addEventListener('DOMContentLoaded', function() {
+  if (!document.getElementById('sprout-loader')) {
+    var loader = document.createElement('div');
+    loader.className = 'sprout-loader';
+    loader.id = 'sprout-loader';
+    loader.innerHTML = '<div class="loader-dots"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div><div class="loader-sprout">🌱</div>';
+    document.body.appendChild(loader);
+  }
+});
+
+// fix loader — wire after DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+  var loader = document.getElementById('sprout-loader');
+  if (!loader) return;
+  var _realShowScreen = showScreen;
+  showScreen = function(id) {
+    loader.classList.add('visible');
+    setTimeout(function() {
+      _realShowScreen(id);
+      setTimeout(function() {
+        loader.classList.remove('visible');
+      }, 150);
+    }, 400);
+  };
+});
