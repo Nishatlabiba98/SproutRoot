@@ -458,3 +458,34 @@ body {
 .pedagogy-content { flex: 1; }
 .pedagogy-title { font-size: 14px; font-weight: 900; color: #4A2800; margin-bottom: 3px; }
 .pedagogy-desc { font-size: 11px; color: #8B6B3A; font-weight: 600; line-height: 1.6; }
+
+.media-tab {
+  flex: 1; padding: 10px 6px; border-radius: 12px;
+  border: 2px solid #C8A060; background: #F0E8D8;
+  color: #4A2800; font-size: 11px; font-weight: 900;
+  font-family: inherit; cursor: pointer; transition: all .15s;
+}
+.media-tab.active-tab {
+  background: #CC1A1A; color: white; border-color: #8A0A0A;
+}
+.media-section { max-height: 60vh; overflow-y: auto; }
+.media-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid #F0E8D8;
+}
+.media-emoji { font-size: 28px; flex-shrink: 0; }
+.media-title { font-size: 13px; font-weight: 900; color: #4A2800; margin-bottom: 2px; }
+.media-sub { font-size: 11px; color: #8B6B3A; font-weight: 600; }
+
+.book-link {
+  font-size: 10px; font-weight: 900; padding: 4px 10px;
+  border-radius: 8px; text-decoration: none; display: inline-block;
+}
+.green-link { background: #00A651; color: white; }
+.blue-link { background: #1A7CE8; color: white; }
+
+.show-link {
+  font-size: 10px; font-weight: 900; padding: 4px 10px;
+  border-radius: 8px; text-decoration: none; display: inline-block;
+  color: white; margin-right: 4px;
+}
