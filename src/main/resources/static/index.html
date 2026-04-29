@@ -7,6 +7,16 @@
   <link rel="stylesheet" href="/css/main.css?v=9"/>
 </head>
 <body>
+  <!-- LYRICS MODAL -->
+  <div id="lyrics-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#FFF8E8;border-radius:24px;padding:24px;width:340px;max-height:80vh;overflow-y:auto;border:3px solid #8B6B3A">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div id="lyrics-title" style="font-size:16px;font-weight:900;color:#4A2800"></div>
+        <button onclick="document.getElementById('lyrics-modal').style.display='none'" style="background:#CC1A1A;color:white;border:none;border-radius:10px;padding:6px 12px;font-weight:900;cursor:pointer;font-family:inherit">X</button>
+      </div>
+      <div id="lyrics-body" style="font-size:14px;color:#4A2800;line-height:2;font-weight:600;white-space:pre-line"></div>
+    </div>
+  </div>
 
   <!-- PIN OVERLAY -->
   <div id="pin-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:999;flex-direction:column;align-items:center;justify-content:center">
@@ -216,6 +226,79 @@
           <div class="cycle-dot" id="cycle-shape-village">🔷</div>
           <div class="cycle-dot" id="cycle-sorting-tray">🐾</div>
         </div>
+      </div>
+    </div>
+      <button onclick="showScreen('media')" style="width:100%;margin-top:12px;padding:12px;border-radius:16px;border:2px solid #8B6B3A;background:#FFF8E8;color:#4A2800;font-size:13px;font-weight:900;font-family:inherit;cursor:pointer;box-shadow:0 3px 0 #8B6B3A">📚 Media Library — Rhymes · Books · Shows</button>
+  </div>
+
+
+  <!-- MEDIA SCREEN -->
+  <div id="screen-media" class="screen">
+    <div class="shelf-header">
+      <div style="font-size:24px">📚</div>
+      <div class="sprout-title">Media Library</div>
+      <button onclick="showMenu()" style="background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);border-radius:16px;color:white;font-size:12px;font-weight:900;padding:6px 12px;cursor:pointer">← Back</button>
+    </div>
+    <div style="background:#FFF8E8;padding:16px;border-radius:0 0 28px 28px;border:3px solid #8A0A0A;border-top:none">
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button onclick="showTab('rhymes')" id="tab-rhymes" class="media-tab active-tab">🎵 Rhymes</button>
+        <button onclick="showTab('books')" id="tab-books" class="media-tab">📖 Books</button>
+        <button onclick="showTab('shows')" id="tab-shows" class="media-tab">📺 Shows</button>
+      </div>
+      <div id="media-rhymes" class="media-section">
+        <div class="media-item" onclick="showLyrics('Itsy Bitsy Spider')" style="cursor:pointer">
+          <div class="media-emoji">🕷️</div><div><div class="media-title">Itsy Bitsy Spider</div><div class="media-sub">Nature · persistence · cause and effect — tap for lyrics</div></div>
+        </div>
+        <div class="media-item" onclick="showLyrics('Mary Mary Quite Contrary')" style="cursor:pointer">
+          <div class="media-emoji">🌿</div><div><div class="media-title">Mary Mary Quite Contrary</div><div class="media-sub">Gardening · caring for environment — tap for lyrics</div></div>
+        </div>
+        <div class="media-item" onclick="showLyrics('One Two Three Four Five')" style="cursor:pointer">
+          <div class="media-emoji">🐟</div><div><div class="media-title">One Two Three Four Five</div><div class="media-sub">Counting · one-to-one correspondence — tap for lyrics</div></div>
+        </div>
+        <div class="media-item" onclick="showLyrics('This Little Piggy')" style="cursor:pointer">
+          <div class="media-emoji">🐷</div><div><div class="media-title">This Little Piggy</div><div class="media-sub">Touch counting · one-to-one — tap for lyrics</div></div>
+        </div>
+        <div class="media-item" onclick="showLyrics('Five Little Ducks')" style="cursor:pointer">
+          <div class="media-emoji">🦆</div><div><div class="media-title">Five Little Ducks</div><div class="media-sub">Subtraction · counting backwards — tap for lyrics</div></div>
+        </div>
+        <div class="media-item" onclick="showLyrics('Old MacDonald Had a Farm')" style="cursor:pointer">
+          <div class="media-emoji">🚜</div><div><div class="media-title">Old MacDonald Had a Farm</div><div class="media-sub">Animal sounds · categorization — tap for lyrics</div></div>
+        </div>
+        <div class="media-item" onclick="showLyrics('Baa Baa Black Sheep')" style="cursor:pointer">
+          <div class="media-emoji">🐑</div><div><div class="media-title">Baa Baa Black Sheep</div><div class="media-sub">Animal sounds · practical life — tap for lyrics</div></div>
+        </div>
+      </div>
+      <div id="media-books" class="media-section" style="display:none">
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <a href="https://libbyapp.com" target="_blank" style="flex:1;padding:12px;border-radius:14px;background:#00A651;color:white;font-size:12px;font-weight:900;text-align:center;text-decoration:none;border:2px solid #007A3A;display:block">📚 Libby — Free with Library Card</a>
+          <a href="https://getepic.com" target="_blank" style="flex:1;padding:12px;border-radius:14px;background:#1A7CE8;color:white;font-size:12px;font-weight:900;text-align:center;text-decoration:none;border:2px solid #0D4FA0;display:block">⭐ Epic! — $9.99/month</a>
+        </div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">Chicka Chicka Boom Boom</div><div class="media-sub">Bill Martin Jr. · Letters · Ages 2-5</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">Dr. Seuss ABC</div><div class="media-sub">Dr. Seuss · Phonics · Ages 2-5</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">Bob Books Set 1</div><div class="media-sub">Bobby Lynn Maslen · Early Reading · Ages 3-6</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">The Very Hungry Caterpillar</div><div class="media-sub">Eric Carle · Counting · Ages 2-5</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">Ten Black Dots</div><div class="media-sub">Donald Crews · Numbers · Ages 2-5</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">Mouse Shapes</div><div class="media-sub">Ellen Stoll Walsh · Shapes · Ages 2-5</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">The Shape of Things</div><div class="media-sub">Dayle Ann Dodds · Shapes · Ages 3-6</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">Color Zoo</div><div class="media-sub">Lois Ehlert · Shapes and Colors · Ages 2-5</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">Chicka Chicka 1 2 3</div><div class="media-sub">Bill Martin Jr. · Numbers · Ages 2-5</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">Actual Size</div><div class="media-sub">Steve Jenkins · Animals · Ages 3-6</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">What Do You Do With a Problem?</div><div class="media-sub">Kobi Yamada · Social Emotional · Ages 3-6</div></div></div>
+        <div class="media-item"><div class="media-emoji">📖</div><div><div class="media-title">Basic Montessori</div><div class="media-sub">David Gettman · Parent Reference · Ages 0-6</div></div></div>
+      </div>
+      <div id="media-shows" class="media-section" style="display:none">
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Numberblocks</div><div class="media-sub">Numbers and Math · Ages 2-5</div><div style="margin-top:4px"><a href="https://www.netflix.com/search?q=numberblocks" target="_blank" class="show-link" style="background:#E50914">Netflix</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Alphablocks</div><div class="media-sub">Letters and Phonics · Ages 2-5</div><div style="margin-top:4px"><a href="https://www.youtube.com/@alphablocks" target="_blank" class="show-link" style="background:#FF0000">YouTube Free</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Leapfrog Letter Factory</div><div class="media-sub">Phonics · Ages 2-5</div><div style="margin-top:4px"><a href="https://www.youtube.com/results?search_query=leapfrog+letter+factory" target="_blank" class="show-link" style="background:#FF0000">YouTube Free</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Super Why!</div><div class="media-sub">Reading · Ages 3-6</div><div style="margin-top:4px"><a href="https://pbskids.org/superwhy" target="_blank" class="show-link" style="background:#0077CC">PBS Kids Free</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Peg + Cat</div><div class="media-sub">Math · Ages 3-6</div><div style="margin-top:4px"><a href="https://pbskids.org/peg" target="_blank" class="show-link" style="background:#0077CC">PBS Kids Free</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Daniel Tigers Neighborhood</div><div class="media-sub">Social Emotional · Ages 2-5</div><div style="margin-top:4px"><a href="https://pbskids.org/daniel" target="_blank" class="show-link" style="background:#0077CC">PBS Kids Free</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Bluey</div><div class="media-sub">Play and Creativity · Ages 2-6</div><div style="margin-top:4px"><a href="https://www.disneyplus.com/search/bluey" target="_blank" class="show-link" style="background:#0D4FA0">Disney+</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Curious George</div><div class="media-sub">Science and Curiosity · Ages 2-5</div><div style="margin-top:4px"><a href="https://pbskids.org/curiousgeorge" target="_blank" class="show-link" style="background:#0077CC">PBS Kids Free</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Pocoyo</div><div class="media-sub">Shapes and Colors · Ages 1-4</div><div style="margin-top:4px"><a href="https://www.youtube.com/@PocoyoEnglish" target="_blank" class="show-link" style="background:#FF0000">YouTube Free</a><a href="https://www.netflix.com/search?q=pocoyo" target="_blank" class="show-link" style="background:#E50914;margin-left:4px">Netflix</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Ask the StoryBots</div><div class="media-sub">Curiosity · Ages 3-6</div><div style="margin-top:4px"><a href="https://www.netflix.com/search?q=storybots" target="_blank" class="show-link" style="background:#E50914">Netflix</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Team Umizoomi</div><div class="media-sub">Math · Ages 2-5</div><div style="margin-top:4px"><a href="https://www.paramountplus.com/search/team+umizoomi" target="_blank" class="show-link" style="background:#0057FF">Paramount+</a></div></div></div>
+        <div class="media-item"><div class="media-emoji">📺</div><div><div class="media-title">Blues Clues and You</div><div class="media-sub">Problem Solving · Ages 2-5</div><div style="margin-top:4px"><a href="https://www.paramountplus.com/search/blues+clues" target="_blank" class="show-link" style="background:#0057FF">Paramount+</a></div></div></div>
       </div>
     </div>
   </div>

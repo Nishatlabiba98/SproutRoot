@@ -1118,3 +1118,34 @@ showMenu = function() {
   if (wb) wb.style.display = 'none';
   renderPinkTower(currentDifficulty);
 };
+
+function showTab(tab) {
+  ['rhymes','books','shows'].forEach(function(t) {
+    document.getElementById('media-' + t).style.display = t === tab ? 'block' : 'none';
+    var btn = document.getElementById('tab-' + t);
+    if (btn) btn.classList.toggle('active-tab', t === tab);
+  });
+}
+
+function showLyrics(title, lyrics) {
+  document.getElementById('lyrics-title').textContent = title;
+  document.getElementById('lyrics-body').textContent = lyrics;
+  document.getElementById('lyrics-modal').style.display = 'flex';
+}
+
+var RHYME_LYRICS = {
+  'Itsy Bitsy Spider': 'The itsy bitsy spider\nClimbed up the waterspout.\nDown came the rain\nAnd washed the spider out.\nOut came the sun\nAnd dried up all the rain,\nAnd the itsy bitsy spider\nClimbed up the spout again.',
+  'Mary Mary Quite Contrary': 'Mary, Mary, quite contrary,\nHow does your garden grow?\nWith silver bells and cockle shells,\nAnd pretty maids all in a row.',
+  'One Two Three Four Five': 'One, two, three, four, five,\nOnce I caught a fish alive.\nSix, seven, eight, nine, ten,\nThen I let it go again.\nWhy did you let it go?\nBecause it bit my finger so.\nWhich finger did it bite?\nThis little finger on the right.',
+  'This Little Piggy': 'This little piggy went to market,\nThis little piggy stayed home,\nThis little piggy had roast beef,\nThis little piggy had none,\nAnd this little piggy cried\nWee wee wee all the way home!',
+  'Five Little Ducks': 'Five little ducks went out one day,\nOver the hill and far away.\nMother duck said quack quack quack quack,\nBut only four little ducks came back.\n\nFour little ducks went out one day,\nOver the hill and far away.\nMother duck said quack quack quack quack,\nBut only three little ducks came back.\n\nOne little duck went out one day,\nOver the hill and far away.\nMother duck said quack quack quack quack,\nAnd all the five little ducks came back!',
+  'Old MacDonald Had a Farm': 'Old MacDonald had a farm, E-I-E-I-O!\nAnd on his farm he had a cow, E-I-E-I-O!\nWith a moo moo here, and a moo moo there,\nHere a moo, there a moo, everywhere a moo moo.\nOld MacDonald had a farm, E-I-E-I-O!\n\nAnd on his farm he had a dog, E-I-E-I-O!\nWith a woof woof here, and a woof woof there...\n\nAnd on his farm he had a cat, E-I-E-I-O!\nWith a meow meow here, and a meow meow there...',
+  'Baa Baa Black Sheep': 'Baa baa black sheep,\nHave you any wool?\nYes sir, yes sir,\nThree bags full.\nOne for the master,\nOne for the dame,\nAnd one for the little boy\nWho lives down the lane.'
+};
+
+function showLyrics(title) {
+  var lyrics = RHYME_LYRICS[title] || 'Lyrics coming soon!';
+  document.getElementById('lyrics-title').textContent = title;
+  document.getElementById('lyrics-body').textContent = lyrics;
+  document.getElementById('lyrics-modal').style.display = 'flex';
+}
