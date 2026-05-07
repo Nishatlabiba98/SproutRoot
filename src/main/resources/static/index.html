@@ -229,6 +229,20 @@
       </div>
     </div>
       <button onclick="showScreen('media')" style="width:100%;margin-top:12px;padding:12px;border-radius:16px;border:2px solid #8B6B3A;background:#FFF8E8;color:#4A2800;font-size:13px;font-weight:900;font-family:inherit;cursor:pointer;box-shadow:0 3px 0 #8B6B3A">📚 Media Library — Rhymes · Books · Shows</button>
+      <div id="work-timer-bar" style="margin-top:10px;background:#F0E8D8;border-radius:14px;border:2px solid #C8A060;padding:10px 14px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px">⏳</span>
+          <div>
+            <div style="font-size:11px;font-weight:900;color:#4A2800">Work Cycle Timer</div>
+            <div id="work-timer-display" style="font-size:13px;font-weight:700;color:#8B6B3A">0:00</div>
+          </div>
+        </div>
+        <button onclick="resetWorkTimer()" style="background:#CC1A1A;color:white;border:none;border-radius:10px;padding:5px 10px;font-size:11px;font-weight:900;cursor:pointer;font-family:inherit">Reset</button>
+      </div>
+      <div id="work-timer-msg" style="display:none;margin-top:8px;background:#3D8A20;border-radius:12px;padding:10px 14px;text-align:center">
+        <div style="font-size:13px;font-weight:900;color:white">🌿 20 minutes of beautiful work!</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.85);font-weight:600;margin-top:3px">Boredom is where creativity lives. A little rest is okay.</div>
+      </div>
   </div>
 
 
@@ -246,6 +260,17 @@
         <button onclick="showTab('shows')" id="tab-shows" class="media-tab">📺 Shows</button>
       </div>
       <div id="media-rhymes" class="media-section">
+        <div class="recorder-card">
+          <div class="recorder-title">🎙️ Record a Rhyme</div>
+          <div class="recorder-sub">Tap record, read the rhyme aloud, tap stop</div>
+          <input id="recorder-label" placeholder="Name your recording..." style="width:100%;padding:10px;border-radius:10px;border:2px solid #C8A060;font-family:inherit;font-size:13px;font-weight:700;color:#4A2800;background:#FFF8E8;margin-bottom:10px;box-sizing:border-box"/>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <button id="rec-start-btn" onclick="startRecording()" class="rec-btn rec-red">🔴 Record</button>
+            <button id="rec-stop-btn" onclick="stopRecording()" class="rec-btn rec-gray" disabled>⏹ Stop</button>
+          </div>
+          <div id="rec-status" style="font-size:11px;color:#8B6B3A;font-weight:700;margin-bottom:8px"></div>
+          <div id="recordings-list"></div>
+        </div>
         <div class="media-item" onclick="showLyrics('Itsy Bitsy Spider')" style="cursor:pointer">
           <div class="media-emoji">🕷️</div><div><div class="media-title">Itsy Bitsy Spider</div><div class="media-sub">Nature · persistence · cause and effect — tap for lyrics</div></div>
         </div>
@@ -380,6 +405,21 @@
           <div id="show-rec1" class="rec-item"></div>
           <div id="show-rec2" class="rec-item"></div>
         </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <button id="obs-toggle-btn" onclick="toggleObsJournal()" style="width:100%;padding:12px;border-radius:16px;border:2px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:white;font-size:13px;font-weight:900;font-family:inherit;cursor:pointer">👁️ Add Observation Note</button>
+        <div id="obs-journal-form" style="display:none;margin-top:8px">
+          <textarea id="obs-text" placeholder="What did you notice?" style="width:100%;height:80px;border-radius:12px;border:2px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:white;font-family:inherit;font-size:12px;font-weight:600;padding:10px;resize:none;box-sizing:border-box"></textarea>
+          <button onclick="saveObsNote()" style="width:100%;margin-top:6px;padding:10px;border-radius:12px;border:none;background:white;color:#3D8A20;font-size:13px;font-weight:900;font-family:inherit;cursor:pointer">💚 Save Note</button>
+          <div id="obs-saved-msg" style="display:none;text-align:center;font-size:11px;font-weight:900;color:white;margin-top:6px">Saved!</div>
+        </div>
+        <div id="obs-recent" style="margin-top:8px"></div>
+      </div>
+      <div id="language-wall" style="display:none;margin-bottom:12px;background:rgba(255,255,255,.1);border-radius:20px;border:2px solid rgba(255,255,255,.3);padding:16px;text-align:center">
+        <div style="font-size:12px;font-weight:900;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🎨 Hundred Language Wall</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.7);font-weight:600;font-style:italic;margin-bottom:12px">A portrait of today's work — Loris Malaguzzi</div>
+        <div id="language-wall-canvas" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:8px"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:600;margin-top:10px;font-style:italic">Screenshot this and put it on the fridge 🖼️</div>
       </div>
       <button class="big-btn green-btn" id="btn-play-again" onclick="showMenu()">Choose more work 🌱</button>
     </div>
