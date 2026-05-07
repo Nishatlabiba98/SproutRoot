@@ -391,6 +391,15 @@ function speakWord(word) {
 }
 
 function renderQuestion(q) {
+  // track word for language wall
+  if (q && q.correctAnswer && typeof currentGame !== 'undefined') {
+    if (!window.sessionWords) window.sessionWords = [];
+    var _type = currentGame === 'sound-safari' ? 'LETTER'
+      : currentGame === 'berry-basket' ? 'NUMBER'
+      : currentGame === 'shape-village' ? 'SHAPE' : 'ANIMAL';
+    var _already = window.sessionWords.some(function(w) { return w.word === q.correctAnswer; });
+    if (!_already) window.sessionWords.push({ word: q.correctAnswer, type: _type });
+  }
   var pct = ((questionNumber - 1) / q.totalQuestions) * 100;
   document.getElementById('prog-fill').style.width = pct + '%';
   document.getElementById('q-count').textContent = 'Question ' + questionNumber + ' of ' + q.totalQuestions;
@@ -1197,3 +1206,262 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 400);
   };
 });
+
+// ── RHYME RECORDER ───────────────────────────────────────────────────────
+var mediaRecorder = null;
+var audioChunks = [];
+var recordings = JSON.parse(localStorage.getItem('sproutroot-recordings') || '[]');
+
+function renderRecordings() {
+  var list = document.getElementById('recordings-list');
+  if (!list) return;
+  if (recordings.length === 0) {
+    list.innerHTML = '<div style="font-size:11px;color:#8B6B3A;font-weight:600;text-align:center;padding:8px">No recordings yet</div>';
+    return;
+  }
+  list.innerHTML = recordings.map(function(r, i) {
+    return '<div class="recording-item">' +
+      '<div class="recording-name">🎵 ' + r.name + '</div>' +
+      '<button class="play-rec-btn" onclick="playRecording(' + i + ')">▶ Play</button>' +
+      '<button class="del-rec-btn" onclick="deleteRecording(' + i + ')">✕</button>' +
+      '</div>';
+  }).join('');
+}
+
+function startRecording() {
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = function(e) { audioChunks.push(e.data); };
+    mediaRecorder.onstop = function() {
+      var blob = new Blob(audioChunks, { type: 'audio/webm' });
+      var reader = new FileReader();
+      reader.onloadend = function() {
+        var name = document.getElementById('recorder-label').value || ('Recording ' + (recordings.length + 1));
+        recordings.push({ name: name, data: reader.result });
+        localStorage.setItem('sproutroot-recordings', JSON.stringify(recordings));
+        document.getElementById('recorder-label').value = '';
+        document.getElementById('rec-status').textContent = '✅ Saved!';
+        renderRecordings();
+      };
+      reader.readAsDataURL(blob);
+      stream.getTracks().forEach(function(t) { t.stop(); });
+    };
+    mediaRecorder.start();
+    document.getElementById('rec-start-btn').disabled = true;
+    document.getElementById('rec-stop-btn').disabled = false;
+    document.getElementById('rec-status').textContent = '🔴 Recording...';
+  }).catch(function() {
+    document.getElementById('rec-status').textContent = '❌ Microphone access denied';
+  });
+}
+
+function stopRecording() {
+  if (mediaRecorder) mediaRecorder.stop();
+  document.getElementById('rec-start-btn').disabled = false;
+  document.getElementById('rec-stop-btn').disabled = true;
+  document.getElementById('rec-status').textContent = 'Saving...';
+}
+
+function playRecording(idx) {
+  var audio = new Audio(recordings[idx].data);
+  audio.play();
+}
+
+function deleteRecording(idx) {
+  recordings.splice(idx, 1);
+  localStorage.setItem('sproutroot-recordings', JSON.stringify(recordings));
+  renderRecordings();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderRecordings();
+});
+
+// ── WORK CYCLE TIMER ─────────────────────────────────────────────────────
+var workTimerSeconds = 0;
+var workTimerInterval = null;
+
+function startWorkTimer() {
+  if (workTimerInterval) return;
+  workTimerInterval = setInterval(function() {
+    workTimerSeconds++;
+    var mins = Math.floor(workTimerSeconds / 60);
+    var secs = workTimerSeconds % 60;
+    var display = document.getElementById('work-timer-display');
+    if (display) display.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+    if (workTimerSeconds === 1200) {
+      var msg = document.getElementById('work-timer-msg');
+      if (msg) msg.style.display = 'block';
+    }
+  }, 1000);
+}
+
+function resetWorkTimer() {
+  workTimerSeconds = 0;
+  var display = document.getElementById('work-timer-display');
+  if (display) display.textContent = '0:00';
+  var msg = document.getElementById('work-timer-msg');
+  if (msg) msg.style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  startWorkTimer();
+});
+
+// ── OBSERVATION JOURNAL ──────────────────────────────────────────────────
+var obsNotes = JSON.parse(localStorage.getItem('sproutroot-obs-notes') || '[]');
+
+function toggleObsJournal() {
+  var form = document.getElementById('obs-journal-form');
+  if (!form) return;
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('obs-saved-msg').style.display = 'none';
+  renderObsRecent();
+}
+
+function saveObsNote() {
+  var text = document.getElementById('obs-text').value.trim();
+  if (!text) return;
+  var note = {
+    text: text,
+    game: currentGame || 'session',
+    date: new Date().toLocaleDateString()
+  };
+  obsNotes.unshift(note);
+  if (obsNotes.length > 20) obsNotes.pop();
+  localStorage.setItem('sproutroot-obs-notes', JSON.stringify(obsNotes));
+  document.getElementById('obs-text').value = '';
+  document.getElementById('obs-saved-msg').style.display = 'block';
+  renderObsRecent();
+}
+
+function renderObsRecent() {
+  var el = document.getElementById('obs-recent');
+  if (!el || obsNotes.length === 0) return;
+  var recent = obsNotes.slice(0, 3);
+  el.innerHTML = recent.map(function(n) {
+    return '<div style="background:rgba(255,255,255,.1);border-radius:10px;padding:8px 10px;margin-bottom:6px;text-align:left">' +
+      '<div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:700">' + n.date + ' · ' + (GAME_LABELS[n.game.toUpperCase().replace('-','_')] || n.game) + '</div>' +
+      '<div style="font-size:12px;color:white;font-weight:600;margin-top:2px">' + n.text + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+// ── HUNDRED LANGUAGE WALL ────────────────────────────────────────────────
+var sessionWords = [];
+
+function trackSessionWord(word, type) {
+  sessionWords.push({ word: word, type: type });
+}
+
+function buildLanguageWall() {
+  if (completedGames.size < 4) return;
+  var wall = document.getElementById('language-wall');
+  var canvas = document.getElementById('language-wall-canvas');
+  if (!wall || !canvas) return;
+
+  var colors = {
+    'LETTER': '#1A7CE8',
+    'NUMBER': '#F07820',
+    'SHAPE': '#8830E8',
+    'ANIMAL': '#00A651'
+  };
+
+  var sizes = ['14px','16px','18px','14px','20px','15px','17px','13px','16px','14px'];
+
+  canvas.innerHTML = sessionWords.map(function(w, i) {
+    var color = colors[w.type] || '#CC1A1A';
+    var size = sizes[i % sizes.length];
+    var rotate = (Math.random() * 20 - 10).toFixed(1);
+    return '<span style="' +
+      'display:inline-block;' +
+      'font-size:' + size + ';' +
+      'font-weight:900;' +
+      'color:white;' +
+      'background:' + color + ';' +
+      'border-radius:20px;' +
+      'padding:4px 10px;' +
+      'transform:rotate(' + rotate + 'deg);' +
+      'box-shadow:0 3px 8px rgba(0,0,0,.2);' +
+      '">' + w.word + '</span>';
+  }).join('');
+
+  wall.style.display = 'block';
+}
+
+// patch submitAnswer to track words
+var _origSubmitAnswer = submitAnswer;
+submitAnswer = async function(given, btn) {
+  if (!answered && currentQuestion) {
+    var type = currentGame === 'sound-safari' ? 'LETTER'
+      : currentGame === 'berry-basket' ? 'NUMBER'
+      : currentGame === 'shape-village' ? 'SHAPE'
+      : 'ANIMAL';
+    trackSessionWord(currentQuestion.correctAnswer, type);
+  }
+  return _origSubmitAnswer(given, btn);
+};
+
+// patch showComplete to build wall
+var _origShowComplete = showComplete;
+showComplete = async function() {
+  sessionWords = [];
+  var result = await _origShowComplete();
+  setTimeout(buildLanguageWall, 500);
+  return result;
+};
+
+// force language wall to always show after any game
+document.addEventListener('DOMContentLoaded', function() {
+  var orig = showComplete;
+  showComplete = async function() {
+    sessionWords = sessionWords || [];
+    var result = await orig();
+    setTimeout(function() {
+      var wall = document.getElementById('language-wall');
+      var canvas = document.getElementById('language-wall-canvas');
+      if (!wall || !canvas) return;
+      sessionWords = window.sessionWords || []; if (sessionWords.length === 0) {
+        // seed with current question data
+        if (currentQuestion) {
+          var type = currentGame === 'sound-safari' ? 'LETTER'
+            : currentGame === 'berry-basket' ? 'NUMBER'
+            : currentGame === 'shape-village' ? 'SHAPE' : 'ANIMAL';
+          sessionWords.push({ word: currentQuestion.correctAnswer, type: type });
+        }
+      }
+      var colors = { 'LETTER': '#1A7CE8', 'NUMBER': '#F07820', 'SHAPE': '#8830E8', 'ANIMAL': '#00A651' };
+      var sizes = ['14px','16px','18px','14px','20px','15px','17px','13px'];
+      canvas.innerHTML = sessionWords.map(function(w, i) {
+        var color = colors[w.type] || '#CC1A1A';
+        var rotate = (Math.random() * 20 - 10).toFixed(1);
+        return '<span style="display:inline-block;font-size:' + sizes[i % sizes.length] + ';font-weight:900;color:white;background:' + color + ';border-radius:20px;padding:4px 10px;transform:rotate(' + rotate + 'deg);box-shadow:0 3px 8px rgba(0,0,0,.2);margin:3px">' + w.word + '</span>';
+      }).join('');
+      wall.style.display = 'block';
+    }, 600);
+    return result;
+  };
+});
+
+// clean fix — track directly in renderQuestion via monkey patch
+var _baseRenderQuestion = renderQuestion;
+renderQuestion = function(q) {
+  if (q && q.correctAnswer) {
+    var type = currentGame === 'sound-safari' ? 'LETTER'
+      : currentGame === 'berry-basket' ? 'NUMBER'
+      : currentGame === 'shape-village' ? 'SHAPE' : 'ANIMAL';
+    if (!sessionWords) sessionWords = [];
+    // avoid duplicates
+    var already = sessionWords.some(function(w) { return w.word === q.correctAnswer; });
+    if (!already) sessionWords.push({ word: q.correctAnswer, type: type });
+  }
+  return _baseRenderQuestion(q);
+};
+
+// reset session words when starting a new game
+var _baseStartActualGame = startActualGame;
+startActualGame = async function(gameType) {
+  if (completedGames.size === 0) sessionWords = [];
+  return _baseStartActualGame(gameType);
+};
