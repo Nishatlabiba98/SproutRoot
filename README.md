@@ -8,7 +8,9 @@ SproutRoot lets a parent curate a learning experience for their child — choosi
 
 ## The Problem
 
-Preparing a child for preschool is overwhelming. Generic apps are cluttered with ads and disconnected from real developmental standards. There is no single tool that lets a parent hand-pick Montessori-aligned activities and track progress against federal learning standards.
+Preparing a child for preschool is overwhelming. Generic apps are cluttered with ads and disconnected from real developmental standards. There is no single tool that lets a parent hand-pick Montessori activities mapped to actual federal preschool readiness standards.
+
+**SproutRoot solves this.**
 
 ---
 
@@ -62,7 +64,7 @@ Preparing a child for preschool is overwhelming. Generic apps are cluttered with
 
 ## Milestone Standard
 
-SproutRoot uses the **Head Start Early Learning Outcomes Framework (ELOF)** — a federal public domain standard covering birth to age 5, organized by domain and age range. Every game session is mapped to real developmental milestones.
+SproutRoot uses the **Head Start Early Learning Outcomes Framework (ELOF)** — a federal public domain standard covering birth to age 5, organized by domain and age range. Every game session is mapped to an ELOF code so parents see real developmental progress, not just game stats.
 
 ---
 
@@ -136,7 +138,7 @@ psql -d sproutroot -c "SELECT code, domain FROM elof_milestone ORDER BY code;"
 
 ## Built by
 
-**Nishat** — Zip Code Wilmington, PyJava2025 cohort  
+**Nishat** — Zip Code Wilmington, PyJava2026 cohort  
 Capstone passion project 🌱
 
 ---
