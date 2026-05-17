@@ -2,13 +2,13 @@
 
 A Montessori-inspired preschool prep app built for parents who want more than a random game.
 
-SproutRoot lets a parent curate a learning experience for their child — choosing activities they trust — while the app ties every session to real **Head Start ELOF developmental milestones** and tracks preschool readiness over time.
+SproutRoot lets a parent curate a learning experience for their child — choosing activities they trust — while the app ties every session to real **Head Start ELOF developmental milestones**.
 
 ---
 
 ## The Problem
 
-Preparing a child for preschool is overwhelming. Generic apps are cluttered with ads and disconnected from real developmental standards. There is no single tool that lets a parent hand-pick Montessori-aligned learning materials, tie them to actual milestones, and track whether their child is truly ready for preschool — all in one calm, focused place.
+Preparing a child for preschool is overwhelming. Generic apps are cluttered with ads and disconnected from real developmental standards. There is no single tool that lets a parent hand-pick Montessori-aligned activities and track progress against federal learning standards.
 
 ---
 
@@ -62,11 +62,11 @@ Preparing a child for preschool is overwhelming. Generic apps are cluttered with
 
 ## Milestone Standard
 
-SproutRoot uses the **Head Start Early Learning Outcomes Framework (ELOF)** — a federal public domain standard covering birth to age 5, organized by domain and age range. Every game session is mapped to a specific ELOF milestone and stored per child.
+SproutRoot uses the **Head Start Early Learning Outcomes Framework (ELOF)** — a federal public domain standard covering birth to age 5, organized by domain and age range. Every game session is mapped to real developmental milestones.
 
 ---
 
-## Project Structure *(coming soon)*
+## Project Structure
 
 ```
 sproutroot/
@@ -84,11 +84,12 @@ sproutroot/
 
 ---
 
-## Getting Started *(coming soon)*
+## Getting Started
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/sproutroot.git
+git clone https://github.com/Nishatlabiba98/sproutroot.git
+cd sproutroot
 
 # Create the database
 createdb sproutroot
@@ -101,46 +102,47 @@ cp src/main/resources/application.properties.example src/main/resources/applicat
 ./mvnw spring-boot:run
 ```
 
+### Quick Commands
+
+```bash
+# Compile
+./mvnw compile
+
+# Kill existing process on port 8080
+lsof -ti:8080 | xargs kill -9
+
+# Clean rebuild and run
+./mvnw clean spring-boot:run
+
+# Check curriculum content seeded in database
+psql -d sproutroot -c "SELECT type, COUNT(*) FROM curriculum_content GROUP BY type ORDER BY type;"
+
+# Check ELOF milestones
+psql -d sproutroot -c "SELECT code, domain FROM elof_milestone ORDER BY code;"
+```
+
+---
+
+## Curriculum Data
+
+54 rows of real Montessori curriculum content in the database:
+
+- **26 letters** — Gettman phonetic sequence, difficulty 1-4
+- **10 numbers** — quantity before symbol, 1-5 then 6-10
+- **8 shapes** — basic four first, then complex
+- **10 categories** — living/non-living → land/air/water → food groups
+
 ---
 
 ## Built by
 
-Nishat — Zip Code Wilmington, PyJava2025 cohort  
+**Nishat** — Zip Code Wilmington, PyJava2025 cohort  
 Capstone passion project 🌱
 
-## also going to seed in a book by beth wood which will be extending activities from the game itself.
+---
 
-mvn compile shortcut
-./mvnw compile
-lsof -ti:8080 | xargs kill -9
-./mvnw clean spring-boot:run
+## References
 
-psql -d sproutroot -c "SELECT type, COUNT(*) FROM curriculum_content GROUP BY type ORDER BY type;"
-54 rows of real Montessori curriculum content in the database:
-
-26 letters — Gettman phonetic sequence, difficulty 1-4
-10 numbers — quantity before symbol, 1-5 then 6-10
-8 shapes — basic four first, then complex
-10 categories — living/non-living → land/air/water → food groups
-
-psql -d sproutroot -c "SELECT code, domain FROM elof_milestone ORDER BY code;"
-code  |              domain             
- 
--------+---------------------------------
--
- ATL-1 | Approaches to Learning
- COG-1 | Cognition
- COG-2 | Cognition
- COG-3 | Cognition
- COG-4 | Cognition
- COG-5 | Cognition
-:
-
-
-some brainstorming
-Phase 1 — the 4 games (what we're building now)
-Phase 2 — real-world activity interface
-Phase 3 — MontessoriConnect co-op layer
-
-we are also going to be using david gettman's book as a reference for seeding in the data.
-Step 6: Game Engine. This is the Java logic that powers each game — picking questions, validating answers, scoring, detecting mistakes. The most interesting part of the backend.
+- Montessori curriculum based on David Gettman's books
+- Real-world activity interface planned for Phase 2
+- MontessoriConnect co-op layer planned for Phase 3
